@@ -10,9 +10,7 @@ import { TreePlot } from "../../components/plot/treePlot/index.js";
 import { LinePlot } from "../../components/plot/linePlot/index.js";
 
 export const Infra = (props) => {
-  const [sectors, setSectors] = useState([]);
   const [years, setYears] = useState([]);
-  const [sector, setSector] = useState("all");
   const [country, setCountry] = useState("all");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
@@ -27,19 +25,14 @@ export const Infra = (props) => {
   const [filteredData, setFilteredData] = useState(data);
 
   const clearFilters = () => {
-    setSector("all");
     setCountry("all");
     setStart("");
     setEnd("");
     setFilteredData(data);
-    sectorRef.current.value = "all";
     countryRef.current.value = "all";
     startRef.current.value = "";
     endRef.current.value = "";
   };
-
-  const filterBySector = (row) =>
-    sector == "all" || row["Tech Sector"] == sector;
 
   const filterByCountry = (row) => country == "all" || row.Country == country;
 
@@ -51,26 +44,17 @@ export const Infra = (props) => {
     data &&
     setFilteredData(() =>
       data.filter(
-        (row) =>
-          filterBySector(row) &&
-          filterByCountry(row) &&
-          filterByStart(row) &&
-          filterByEnd(row),
+        (row) => filterByCountry(row) && filterByStart(row) && filterByEnd(row),
         []
       )
     );
 
   useEffect(() => {
     filterData();
-  }, [sector, country, start, end]);
+  }, [country, start, end]);
 
   useEffect(() => {
     if (data) {
-      const uniqueSectors = Array.from(
-        new Set(data.map((item) => item["Tech Sector"]))
-      );
-      setSectors(uniqueSectors);
-
       const uniqueYears = Array.from(
         new Set(data.map((item) => item.Year))
       ).sort((a, b) => b - a);
@@ -92,22 +76,6 @@ export const Infra = (props) => {
             <div className={"card-title mx-auto text-3xl"}>Filtros</div>
             <div className={"flex flex-col gap-2 m-5"}>
               <div className="form-control">
-                <label className="label">
-                  <span className="label-text font-bold text-xl">Setor</span>
-                </label>
-                <select
-                  className="select select-bordered"
-                  onChange={(e) => setSector(e.target.value)}
-                  ref={sectorRef}
-                >
-                  <option value="all">All</option>
-                  {sectors.map((sector) => (
-                    <option key={sector} value={sector}>
-                      {sector}
-                    </option>
-                  ))}
-                </select>
-
                 <label className="label">
                   <span className="label-text font-bold text-xl">País</span>
                 </label>
