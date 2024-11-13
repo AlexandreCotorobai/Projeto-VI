@@ -116,6 +116,20 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .attr("x", boundsWidth - 150)
       .attr("dy", ".35em")
       .text("Internet Penetration (%)");
+
+    // Add labels
+    g.append("text")
+      .attr(
+        "transform",
+        `translate(${width / 3},${height - margin.bottom + 5})`
+      )
+      .text("Year");
+
+    // Add labels
+    g.append("text")
+      .attr("transform", `translate(-30,${height / 2}) rotate(-90)`)
+      .style("text-anchor", "middle")
+      .text("Value (%)");
   }, [data, width, height, margin, country]);
 
   return <svg ref={svgRef} width={width} height={height}></svg>;
