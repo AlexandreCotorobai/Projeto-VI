@@ -1,11 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useData } from "../../contexts/data.jsx";
 import information from "./information.json";
-import {
-  BAR_PLOT_MARGIN,
-  DEFAULT_MARGIN,
-  NON_LINE_MARGIN,
-} from "../../utils/utils.js";
+import { DEFAULT_MARGIN } from "../../utils/utils.js";
 import { Modal } from "../../components/modal/index.js";
 import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
@@ -185,7 +181,7 @@ export const Infra = (props) => {
                   data={filteredData}
                   width={width}
                   height={height}
-                  margin={NON_LINE_MARGIN}
+                  margin={DEFAULT_MARGIN}
                   country={"China"}
                 />
               )}
@@ -205,7 +201,7 @@ export const Infra = (props) => {
                   data={filteredData}
                   width={width}
                   height={height}
-                  margin={NON_LINE_MARGIN}
+                  margin={DEFAULT_MARGIN}
                   country={"Japan"}
                 />
               )}
@@ -219,7 +215,7 @@ export const Infra = (props) => {
                 data={filteredData}
                 width={width}
                 height={height}
-                margin={NON_LINE_MARGIN}
+                margin={DEFAULT_MARGIN}
               />
             )}
           </ResponsiveWrapper>

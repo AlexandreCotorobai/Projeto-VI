@@ -1,7 +1,6 @@
 import * as d3 from "d3";
 import { INNER_RADIUS, SpiderGrid } from "./grid.jsx";
 import React, { useEffect, useState } from "react";
-import { DEFAULT_COLOR } from "../../../utils/utils.js";
 
 const MARGIN = 30;
 

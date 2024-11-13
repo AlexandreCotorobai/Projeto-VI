@@ -1,18 +1,39 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-export const LinePlot = ({ data, width, height, margin }) => {
+export const LinePlot = ({ data, width, height, margin, country }) => {
   const svgRef = useRef();
 
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    // Parse and prepare the data
-    const parsedData = data.map((d) => ({
-      year: +d.Year, // Convert year to number
-      "5gCoverage": +d["5G Network Coverage (%)"], // Coverage percentage
-      internetPenetration: +d["Internet Penetration (%)"], // Internet penetration percentage
-    }));
+    // Filtra os dados para o país selecionado
+    data = data.filter((d) => d.Country === country);
+
+    // Agrupar dados por ano e calcular médias, substituindo valores null por 0
+    const parsedData = {}; // Objeto onde os dados serão armazenados
+
+    // Obtém os anos únicos presentes no conjunto de dados
+    const years = Array.from(new Set(data.map((d) => d.Year)));
+
+    years.forEach((year) => {
+      // Filtra os dados para o ano específico
+      const yearData = data.filter((d) => d.Year === year);
+
+      // Calcula a média de 5G Network Coverage (%) e Internet Penetration (%)
+      const avg5G = d3.mean(yearData, (d) => +d["5G Network Coverage (%)"]);
+      const avgInternet = d3.mean(
+        yearData,
+        (d) => +d["Internet Penetration (%)"]
+      );
+
+      // Armazena os resultados no objeto parsedData
+      parsedData[year] = {
+        year: new Date(year), // Converte o ano para um objeto Date
+        avg5G: avg5G || 0, // Substitui valores null ou undefined por 0
+        avgInternet: avgInternet || 0, // Substitui valores null ou undefined por 0
+      };
+    });
 
     // Set up the margins and dimensions for the chart
     const boundsWidth = width - margin.left - margin.right;
@@ -24,8 +45,8 @@ export const LinePlot = ({ data, width, height, margin }) => {
 
     // Set up the scales for the axes
     const xScale = d3
-      .scaleLinear()
-      .domain(d3.extent(parsedData, (d) => d.year)) // X scale based on years
+      .scaleTime()
+      .domain(d3.extent(Object.values(parsedData), (d) => d.year)) // X scale based on years
       .range([0, boundsWidth]);
 
     const yScale = d3
@@ -37,12 +58,12 @@ export const LinePlot = ({ data, width, height, margin }) => {
     const lineGenerator5G = d3
       .line()
       .x((d) => xScale(d.year))
-      .y((d) => yScale(d["5gCoverage"]));
+      .y((d) => yScale(d.avg5G));
 
     const lineGeneratorInternet = d3
       .line()
       .x((d) => xScale(d.year))
-      .y((d) => yScale(d.internetPenetration));
+      .y((d) => yScale(d.avgInternet));
 
     // Append the chart group
     const g = svg
@@ -58,7 +79,7 @@ export const LinePlot = ({ data, width, height, margin }) => {
 
     // Add the line for 5G Network Coverage
     g.append("path")
-      .datum(parsedData)
+      .datum(Object.values(parsedData)) // Pass the array of parsed data
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
@@ -66,7 +87,7 @@ export const LinePlot = ({ data, width, height, margin }) => {
 
     // Add the line for Internet Penetration
     g.append("path")
-      .datum(parsedData)
+      .datum(Object.values(parsedData)) // Pass the array of parsed data
       .attr("fill", "none")
       .attr("stroke", "green")
       .attr("stroke-width", 1.5)
@@ -74,30 +95,28 @@ export const LinePlot = ({ data, width, height, margin }) => {
 
     // Add the legend for 5G Network Coverage
     g.append("circle")
-      .attr("cx", boundsWidth - 100)
+      .attr("cx", boundsWidth - 110)
       .attr("cy", 20)
       .attr("r", 6)
       .style("fill", "steelblue");
 
     g.append("text")
-      .attr("x", boundsWidth - 90)
+      .attr("x", boundsWidth - 100)
       .attr("y", 20)
       .attr("dy", ".35em")
       .text("5G Coverage (%)");
 
     // Add the legend for Internet Penetration
     g.append("circle")
-      .attr("cx", boundsWidth - 100)
-      .attr("cy", 40)
+      .attr("cx", boundsWidth - 160)
       .attr("r", 6)
       .style("fill", "green");
 
     g.append("text")
-      .attr("x", boundsWidth - 90)
-      .attr("y", 40)
+      .attr("x", boundsWidth - 150)
       .attr("dy", ".35em")
       .text("Internet Penetration (%)");
-  }, [data, width, height, margin]);
+  }, [data, width, height, margin, country]);
 
   return <svg ref={svgRef} width={width} height={height}></svg>;
 };
