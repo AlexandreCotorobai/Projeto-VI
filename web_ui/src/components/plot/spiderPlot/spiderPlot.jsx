@@ -29,21 +29,19 @@ export const SpiderPlot = ({ data, width, height }) => {
 
     let parsedData = {};
 
-    // Group data by Country and Tech Sector and calculate average values
+    // Agrupar dados por país e setor de tecnologia e calcular médias, substituindo valores null por 0
     countries.forEach((country) => {
       parsedData[country] = {};
       sectors.forEach((sector) => {
         const sectorData = data.filter(
           (d) => d.Country === country && d["Tech Sector"] === sector
         );
-        parsedData[country][sector] = d3.mean(
-          sectorData,
-          (d) => +d["Market Share (%)"]
-        );
+        const value = d3.mean(sectorData, (d) => +d["Market Share (%)"]);
+        parsedData[country][sector] = value || 0; // Substituir null por 0
       });
     });
 
-    // Calculate the global maximum across all sectors for scaling
+    // Calcular o máximo global para o escalonamento
     const maxValue = d3.max(Object.values(parsedData).flatMap(Object.values));
 
     const axisConfig = sectors.map((sector) => ({
@@ -58,7 +56,7 @@ export const SpiderPlot = ({ data, width, height }) => {
       .domain(allVariableNames)
       .range([0, 2 * Math.PI]);
 
-    // Define y-scales based on max value
+    // Definir escalas y com base no valor máximo
     let yScales = {};
     axisConfig.forEach((axis) => {
       yScales[axis.name] = d3
@@ -69,22 +67,31 @@ export const SpiderPlot = ({ data, width, height }) => {
 
     const lineGenerator = d3.lineRadial();
 
-    // Function to calculate coordinates for each country
+    // Função para calcular coordenadas para cada país
     const generateLinePath = (countryData) => {
       const coordinates = axisConfig.map((axis) => {
         const angle = xScale(axis.name) ?? 0;
         const radius = yScales[axis.name](countryData[axis.name] || 0);
         return [angle, radius];
       });
-      coordinates.push(coordinates[0]); // Close the path
+
+      // Verifica se o país tem pelo menos um dado válido
+      const hasValidData = Object.values(countryData).some(
+        (value) => value !== null && value !== 0
+      );
+      if (!hasValidData) return null; // Não desenhar a linha se não houver dados válidos
+
+      coordinates.push(coordinates[0]); // Fechar o caminho
       return lineGenerator(coordinates);
     };
 
-    // Generate paths for each country
-    const linePaths = countries.map((country) => ({
-      path: generateLinePath(parsedData[country]),
-      color: country === "China" ? "blue" : "red",
-    }));
+    // Gerar caminhos para cada país
+    const linePaths = countries
+      .map((country) => ({
+        path: generateLinePath(parsedData[country]),
+        color: country === "China" ? "blue" : "red",
+      }))
+      .filter((line) => line.path !== null); // Filtrar caminhos nulos
 
     setSvgElements({ linePaths, xScale, axisConfig, outerRadius });
   }, [data, width, height]);
