@@ -1,10 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useData } from "../../contexts/data.jsx";
 import information from "./information.json";
+import {
+  BAR_PLOT_MARGIN,
+  DEFAULT_MARGIN,
+  NON_LINE_MARGIN,
+} from "../../utils/utils.js";
 import { Modal } from "../../components/modal/index.js";
 import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
 import { SpiderPlot } from "../../components/plot/spiderPlot/index.js";
+import { TreePlot } from "../../components/plot/treePlot/index.js";
 
 export const Infra = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -166,6 +172,18 @@ export const Infra = (props) => {
           "col-span-full lg:col-span-8 grid grid-cols-4 lg:overflow-y-auto gap-2 pb-3"
         }
       >
+        <Card title={"Exportações"} info={information[1]} setModal={setModal}>
+          <ResponsiveWrapper>
+            {({ width, height }) => (
+              <TreePlot
+                data={filteredData}
+                width={width}
+                height={height}
+                margin={NON_LINE_MARGIN}
+              />
+            )}
+          </ResponsiveWrapper>
+        </Card>
         <Card
           title={"Distribuição do Mercado"}
           info={information[0]}

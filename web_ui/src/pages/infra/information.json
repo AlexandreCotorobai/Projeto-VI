@@ -2,5 +2,9 @@
   {
     "title": "Distribuição do Mercado por Setor Tecnológico",
     "description": "Este gráfico apresenta a distribuição do mercado de diferentes setores tecnológicos, com foco na participação de mercado de cada setor ao longo do tempo. Ele visualiza dados de participação de mercado para vários setores, como Inteligência Artificial, Biotecnologia, Computação em Nuvem, Robótica, Semicondutores, Software e Telecomunicações, fornecendo uma comparação entre países como a China e o Japão. O gráfico facilita a compreensão das variações na participação de mercado de cada setor, permitindo insights sobre as tendências e dominância de diferentes tecnologias em mercados globais."
+  },
+  {
+    "title": "Exportações por Setor Tecnológico",
+    "description": "Este gráfico de árvore (treemap) visualiza a distribuição das exportações por setor tecnológico, destacando o valor total das exportações de cada setor em dólares (USD). Cada retângulo representa um setor específico, e o tamanho de cada retângulo é proporcional ao valor das exportações desse setor. Os setores tecnológicos são identificados pelo nome e são coloridos de forma distinta, facilitando a distinção entre eles. Ao passar o mouse sobre qualquer retângulo, um tooltip aparece, exibindo o nome do setor e o valor total de exportação em dólares. Esse gráfico oferece uma visão clara de quais setores contribuem mais para as exportações tecnológicas, facilitando a análise de tendências de mercado e identificando áreas de destaque nas exportações globais de tecnologia."
   }
 ]
