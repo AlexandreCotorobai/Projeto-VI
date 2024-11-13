@@ -14,6 +14,7 @@ export const DataProvider = ({ children }) => {
         console.log("Fetching Data");
         const data = await d3.csv("dataset.csv");
         setData(data);
+        console.log(data);
         console.log("Data Fetched");
       } catch (error) {
         console.error("Error fetching data:", error);

@@ -4,6 +4,7 @@ import information from "./information.json";
 import { Modal } from "../../components/modal/index.js";
 import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
+import { SpiderPlot } from "../../components/plot/spiderPlot/index.js";
 
 export const Infra = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -170,16 +171,11 @@ export const Infra = (props) => {
           info={information[0]}
           setModal={setModal}
         >
-          {/* <ResponsiveWrapper>
+          <ResponsiveWrapper>
             {({ width, height }) => (
-              <DeathLinePlot
-                data={filteredData}
-                width={width}
-                height={height}
-                margin={DEFAULT_MARGIN}
-              />
+              <SpiderPlot data={filteredData} width={width} height={height} />
             )}
-          </ResponsiveWrapper> */}
+          </ResponsiveWrapper>
         </Card>
         <Modal title={modal.title} content={modal.content} />
       </div>
