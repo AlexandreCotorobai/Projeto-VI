@@ -172,7 +172,7 @@ export const Infra = (props) => {
         {(country === "China" || country === "all") && (
           <Card
             title={"Utilização da Internet e Cobertura 5G - China"}
-            info={information[1]}
+            info={information[0]}
             setModal={setModal}
           >
             <ResponsiveWrapper>
@@ -208,7 +208,7 @@ export const Infra = (props) => {
             </ResponsiveWrapper>
           </Card>
         )}
-        <Card title={"Exportações"} info={information[1]} setModal={setModal}>
+        <Card title={"Exportações"} info={information[2]} setModal={setModal}>
           <ResponsiveWrapper>
             {({ width, height }) => (
               <TreePlot
@@ -222,7 +222,7 @@ export const Infra = (props) => {
         </Card>
         <Card
           title={"Distribuição do Mercado"}
-          info={information[0]}
+          info={information[3]}
           setModal={setModal}
         >
           <ResponsiveWrapper>
