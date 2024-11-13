@@ -1,5 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useData } from "../../contexts/data.jsx";
+import information from "./information.json";
+import { Modal } from "../../components/modal/index.js";
+import { Card } from "../../components/card/index.js";
+import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
 
 export const Invest = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -156,27 +160,28 @@ export const Invest = (props) => {
           </div>
         </div>
       </div>
-      <div>
-        {filteredData &&
-          filteredData.map((row, index) => (
-            <div key={index} className={"card bg-base-100"}>
-              <div className={"card-body"}>
-                <div className={"card-title mx-auto text-3xl"}>
-                  {row["Tech Sector"]}
-                </div>
-                <div className={"grid grid-cols-2 gap-2"}>
-                  <div>
-                    <div className={"text-xl font-bold"}>Country</div>
-                    <div>{row.Country}</div>
-                  </div>
-                  <div>
-                    <div className={"text-xl font-bold"}>Year</div>
-                    <div>{row.Year}</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
+      <div
+        className={
+          "col-span-full lg:col-span-8 grid grid-cols-4 lg:overflow-y-auto gap-2 pb-3"
+        }
+      >
+        <Card
+          title={"Fatalities over Time"}
+          info={information[0]}
+          setModal={setModal}
+        >
+          {/* <ResponsiveWrapper>
+            {({ width, height }) => (
+              <DeathLinePlot
+                data={filteredData}
+                width={width}
+                height={height}
+                margin={DEFAULT_MARGIN}
+              />
+            )}
+          </ResponsiveWrapper> */}
+        </Card>
+        <Modal title={modal.title} content={modal.content} />
       </div>
     </div>
   );
