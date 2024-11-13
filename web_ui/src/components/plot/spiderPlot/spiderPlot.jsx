@@ -7,7 +7,7 @@ const MARGIN = 30;
 
 export const SpiderPlot = ({ data, width, height }) => {
   const [svgElements, setSvgElements] = useState({
-    linePath: "",
+    linePaths: [],
     xScale: null,
     axisConfig: [],
     outerRadius: 0,
@@ -16,31 +16,40 @@ export const SpiderPlot = ({ data, width, height }) => {
   useEffect(() => {
     if (!data || !width || !height) return;
 
+    const countries = ["China", "Japan"];
+    const sectors = [
+      "AI",
+      "Biotechnology",
+      "Cloud Computing",
+      "Robotics",
+      "Semiconductor",
+      "Software",
+      "Telecommunications",
+    ];
+
     let parsedData = {};
 
-    // Group data by Tech Sector
-    d3.groups(data, (d) => d["Tech Sector"]).forEach(
-      ([techSector, sectorData]) => {
-        // Calculate the average (mean) values for each relevant field within this sector
-        parsedData[techSector] = d3.mean(
+    // Group data by Country and Tech Sector and calculate average values
+    countries.forEach((country) => {
+      parsedData[country] = {};
+      sectors.forEach((sector) => {
+        const sectorData = data.filter(
+          (d) => d.Country === country && d["Tech Sector"] === sector
+        );
+        parsedData[country][sector] = d3.mean(
           sectorData,
           (d) => +d["Market Share (%)"]
         );
-      }
-    );
+      });
+    });
 
-    // Calculate the global maximum of the average values for scaling
-    const meanValue = d3.max(Object.values(parsedData));
+    // Calculate the global maximum across all sectors for scaling
+    const maxValue = d3.max(Object.values(parsedData).flatMap(Object.values));
 
-    const axisConfig = [
-      { name: "AI", max: meanValue },
-      { name: "Biotechnology", max: meanValue },
-      { name: "Cloud Computing", max: meanValue },
-      { name: "Robotics", max: meanValue },
-      { name: "Semiconductor", max: meanValue },
-      { name: "Software", max: meanValue },
-      { name: "Telecommunications", max: meanValue },
-    ];
+    const axisConfig = sectors.map((sector) => ({
+      name: sector,
+      max: maxValue,
+    }));
     const outerRadius = Math.min(width, height) / 2 - MARGIN;
 
     const allVariableNames = axisConfig.map((axis) => axis.name);
@@ -49,6 +58,7 @@ export const SpiderPlot = ({ data, width, height }) => {
       .domain(allVariableNames)
       .range([0, 2 * Math.PI]);
 
+    // Define y-scales based on max value
     let yScales = {};
     axisConfig.forEach((axis) => {
       yScales[axis.name] = d3
@@ -58,17 +68,25 @@ export const SpiderPlot = ({ data, width, height }) => {
     });
 
     const lineGenerator = d3.lineRadial();
-    const allCoordinates = axisConfig.map((axis) => {
-      const yScale = yScales[axis.name];
-      const angle = xScale(axis.name) ?? 0;
-      const radius = yScale(parsedData[axis.name] || 0);
-      return [angle, radius];
-    });
 
-    allCoordinates.push(allCoordinates[0]);
-    const linePath = lineGenerator(allCoordinates);
+    // Function to calculate coordinates for each country
+    const generateLinePath = (countryData) => {
+      const coordinates = axisConfig.map((axis) => {
+        const angle = xScale(axis.name) ?? 0;
+        const radius = yScales[axis.name](countryData[axis.name] || 0);
+        return [angle, radius];
+      });
+      coordinates.push(coordinates[0]); // Close the path
+      return lineGenerator(coordinates);
+    };
 
-    setSvgElements({ linePath, xScale, axisConfig, outerRadius });
+    // Generate paths for each country
+    const linePaths = countries.map((country) => ({
+      path: generateLinePath(parsedData[country]),
+      color: country === "China" ? "blue" : "red",
+    }));
+
+    setSvgElements({ linePaths, xScale, axisConfig, outerRadius });
   }, [data, width, height]);
 
   return (
@@ -81,13 +99,16 @@ export const SpiderPlot = ({ data, width, height }) => {
             axisConfig={svgElements.axisConfig}
           />
         )}
-        <path
-          d={svgElements.linePath}
-          stroke={DEFAULT_COLOR}
-          strokeWidth={3}
-          fill={DEFAULT_COLOR}
-          fillOpacity={0.1}
-        />
+        {svgElements.linePaths.map((lineData, index) => (
+          <path
+            key={index}
+            d={lineData.path}
+            stroke={lineData.color}
+            strokeWidth={3}
+            fill={lineData.color}
+            fillOpacity={0.1}
+          />
+        ))}
       </g>
     </svg>
   );

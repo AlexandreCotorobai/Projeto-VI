@@ -167,7 +167,7 @@ export const Infra = (props) => {
         }
       >
         <Card
-          title={"Fatalities over Time"}
+          title={"Distribuição do Mercado"}
           info={information[0]}
           setModal={setModal}
         >
