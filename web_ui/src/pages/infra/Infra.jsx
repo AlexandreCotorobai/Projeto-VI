@@ -11,6 +11,7 @@ import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
 import { SpiderPlot } from "../../components/plot/spiderPlot/index.js";
 import { TreePlot } from "../../components/plot/treePlot/index.js";
+import { LinePlot } from "../../components/plot/linePlot/index.js";
 
 export const Infra = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -169,9 +170,48 @@ export const Infra = (props) => {
       </div>
       <div
         className={
-          "col-span-full lg:col-span-8 grid grid-cols-4 lg:overflow-y-auto gap-2 pb-3"
+          "col-span-full lg:col-span-8 grid grid-cols-4 lg:overflow-y-auto gap-2 pb-3 felx"
         }
       >
+        {(country === "China" || country === "all") && (
+          <Card
+            title={"Utilização da Internet e Cobertura 5G - China"}
+            info={information[1]}
+            setModal={setModal}
+          >
+            <ResponsiveWrapper>
+              {({ width, height }) => (
+                <LinePlot
+                  data={filteredData}
+                  width={width}
+                  height={height}
+                  margin={NON_LINE_MARGIN}
+                  country={"China"}
+                />
+              )}
+            </ResponsiveWrapper>
+          </Card>
+        )}
+
+        {(country === "Japan" || country === "all") && (
+          <Card
+            title={"Utilização da Internet e Cobertura 5G - Japão"}
+            info={information[1]}
+            setModal={setModal}
+          >
+            <ResponsiveWrapper>
+              {({ width, height }) => (
+                <LinePlot
+                  data={filteredData}
+                  width={width}
+                  height={height}
+                  margin={NON_LINE_MARGIN}
+                  country={"Japan"}
+                />
+              )}
+            </ResponsiveWrapper>
+          </Card>
+        )}
         <Card title={"Exportações"} info={information[1]} setModal={setModal}>
           <ResponsiveWrapper>
             {({ width, height }) => (
