@@ -40,24 +40,19 @@ export const Inovation = (props) => {
   const filterByEnd = (row) => end == "" || parseInt(row.Year) <= end;
 
   const filterData = () =>
-    (data &&
-      setFilteredData(() =>
-        data.filter(
-          (row) =>
-            filterBySector(row) &&
-            filterByCountry(row) &&
-            filterByStart(row) &&
-            filterByEnd(row),
-          []
-        )
-      )) ||
-    console.log("filteredData", filteredData);
+    data &&
+    setFilteredData(() =>
+      data.filter(
+        (row) =>
+          filterBySector(row) &&
+          filterByCountry(row) &&
+          filterByStart(row) &&
+          filterByEnd(row),
+        []
+      )
+    );
 
   useEffect(() => {
-    console.log("sector", sector);
-    console.log("country", country);
-    console.log("start", start);
-    console.log("end", end);
     filterData();
   }, [sector, country, start, end]);
 
@@ -77,88 +72,86 @@ export const Inovation = (props) => {
   }, [data]);
 
   return (
-    <>
-      <div
-        className={
-          "grid grid-cols-10 h-full gap-x-4 lg:overflow-y-hidden gap-y-2 lg:gap-y-0 mx-2"
-        }
-        id={"container"}
-      >
-        <div className={"col-span-full lg:col-span-2"}>
-          <div className={"card bg-base-100"}>
-            <div className={"card-body"}>
-              <div className={"card-title mx-auto text-3xl"}>Filtros</div>
-              <div className={"flex flex-col gap-2 m-5"}>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text font-bold text-xl">Setor</span>
-                  </label>
-                  <select
-                    className="select select-bordered"
-                    onChange={(e) => setSector(e.target.value)}
-                    ref={sectorRef}
-                  >
-                    <option value="all">All</option>
-                    {sectors.map((sector) => (
-                      <option key={sector} value={sector}>
-                        {sector}
-                      </option>
-                    ))}
-                  </select>
-
-                  <label className="label">
-                    <span className="label-text font-bold text-xl">País</span>
-                  </label>
-                  <select
-                    className="select select-bordered"
-                    onChange={(e) => setCountry(e.target.value)}
-                    ref={countryRef}
-                  >
-                    <option value={"all"}>All</option>
-                    <option value={"China"}>China</option>
-                    <option value={"Japan"}>Japão</option>
-                  </select>
-
-                  <label className="label">
-                    <span className="label-text font-bold text-xl">Desde</span>
-                  </label>
-                  <select
-                    className="select select-bordered"
-                    onChange={(e) => setStart(e.target.value)}
-                    ref={startRef}
-                  >
-                    <option value=""></option>
-                    {years.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-
-                  <label className="label">
-                    <span className="label-text font-bold text-xl">Até</span>
-                  </label>
-                  <select
-                    className="select select-bordered"
-                    onChange={(e) => setEnd(e.target.value)}
-                    ref={endRef}
-                  >
-                    <option value=""></option>
-                    {years.map((year) => (
-                      <option key={year} value={year}>
-                        {year}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <button
-                  className={"btn btn-block bg-blue-500 text-white"}
-                  onClick={clearFilters}
+    <div
+      className={
+        "grid grid-cols-10 h-full gap-x-4 lg:overflow-y-hidden gap-y-2 lg:gap-y-0 mx-2"
+      }
+      id={"container"}
+    >
+      <div className={"col-span-full lg:col-span-2"}>
+        <div className={"card bg-base-100"}>
+          <div className={"card-body"}>
+            <div className={"card-title mx-auto text-3xl"}>Filtros</div>
+            <div className={"flex flex-col gap-2 m-5"}>
+              <div className="form-control">
+                <label className="label">
+                  <span className="label-text font-bold text-xl">Setor</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  onChange={(e) => setSector(e.target.value)}
+                  ref={sectorRef}
                 >
-                  Clear Filters
-                </button>
+                  <option value="all">All</option>
+                  {sectors.map((sector) => (
+                    <option key={sector} value={sector}>
+                      {sector}
+                    </option>
+                  ))}
+                </select>
+
+                <label className="label">
+                  <span className="label-text font-bold text-xl">País</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  onChange={(e) => setCountry(e.target.value)}
+                  ref={countryRef}
+                >
+                  <option value={"all"}>All</option>
+                  <option value={"China"}>China</option>
+                  <option value={"Japan"}>Japão</option>
+                </select>
+
+                <label className="label">
+                  <span className="label-text font-bold text-xl">Desde</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  onChange={(e) => setStart(e.target.value)}
+                  ref={startRef}
+                >
+                  <option value=""></option>
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
+
+                <label className="label">
+                  <span className="label-text font-bold text-xl">Até</span>
+                </label>
+                <select
+                  className="select select-bordered"
+                  onChange={(e) => setEnd(e.target.value)}
+                  ref={endRef}
+                >
+                  <option value=""></option>
+                  {years.map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                    </option>
+                  ))}
+                </select>
               </div>
+
+              <button
+                className={"btn btn-block bg-blue-500 text-white"}
+                onClick={clearFilters}
+              >
+                Clear Filters
+              </button>
             </div>
           </div>
         </div>
@@ -185,6 +178,6 @@ export const Inovation = (props) => {
             </div>
           ))}
       </div>
-    </>
+    </div>
   );
 };
