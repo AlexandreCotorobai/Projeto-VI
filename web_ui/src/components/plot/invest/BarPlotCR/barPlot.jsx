@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-export const BarPlotCG = ({ data, width, height, margin }) => {
+export const BarPlotCR = ({ data, width, height, margin }) => {
   const svgRef = useRef();
 
   useEffect(() => {
@@ -22,11 +22,13 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
 
       // Calcular a média do ranking global para a China
       const averageChinaRanking =
-        d3.mean(chinaData, (d) => +d["Global Innovation Ranking"]) || 0;
+        d3.sum(chinaData, (d) => +d["Venture Capital Funding (in USD)"]) /
+          1000000000 || 0;
 
       // Calcular a média do ranking global para o Japão
       const averageJapanRanking =
-        d3.mean(japanData, (d) => +d["Global Innovation Ranking"]) || 0;
+        d3.sum(japanData, (d) => +d["Venture Capital Funding (in USD)"]) /
+          1000000000 || 0;
 
       return {
         sector,
@@ -34,6 +36,8 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
         japanRanking: averageJapanRanking,
       };
     });
+
+    console.log(groupedData);
 
     // Dimensões do gráfico
     const boundsWidth = width - margin.left - margin.right;
@@ -50,7 +54,7 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
       .scaleLinear()
       .domain([
         d3.min(groupedData, (d) =>
-          Math.min(d.chinaRanking - 1, d.japanRanking - 1)
+          Math.min(d.chinaRanking - 500, d.japanRanking - 500)
         ),
         d3.max(groupedData, (d) => Math.max(d.chinaRanking, d.japanRanking)),
       ])
@@ -62,7 +66,7 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
 
     const g = svg
       .append("g")
-      .attr("transform", `translate(${margin.left},${margin.top})`);
+      .attr("transform", `translate(${margin.left + 15},${margin.top})`);
 
     // Eixo X com labels ajustadas
     g.append("g")
@@ -115,9 +119,9 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
       .text("Setores");
 
     g.append("text")
-      .attr("transform", `translate(-35,${boundsHeight / 2}) rotate(-90)`)
+      .attr("transform", `translate(-40,${height / 2 - 30}) rotate(-90)`)
       .style("text-anchor", "middle")
-      .text("Ranking Global");
+      .text("Financiamento de Capital de Risco (x10^9 USD)");
 
     // Legenda
     const legend = svg
