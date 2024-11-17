@@ -73,7 +73,16 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
     // Draw the axes
     g.append("g")
       .attr("transform", `translate(0,${boundsHeight})`)
-      .call(d3.axisBottom(xScale));
+      .call(
+        d3
+          .axisBottom(xScale)
+          .ticks(
+            years.length > 10 // Verifica o número de anos no conjunto de dados
+              ? d3.timeYear.every(2)
+              : d3.timeYear.every(1) // Exibe todos os anos quando há poucos dados
+          )
+          .tickFormat(d3.timeFormat("%Y")) // Formata os ticks como anos (YYYY)
+      );
 
     g.append("g").call(d3.axisLeft(yScale));
 
