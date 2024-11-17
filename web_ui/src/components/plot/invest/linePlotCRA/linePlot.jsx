@@ -40,8 +40,6 @@ export const LinePlotCRA = ({ data, width, height, margin }) => {
     // Set up the margins and dimensions for the chart
     const boundsWidth = width - margin.left - margin.right;
     const boundsHeight = height - margin.top - margin.bottom;
-
-    console.log(Object.values(parsedData));
     // Select the SVG element and clear it
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();

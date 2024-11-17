@@ -39,7 +39,6 @@ export const LinePlotSA = ({ data, width, height, margin }) => {
     const boundsWidth = width - margin.left - margin.right;
     const boundsHeight = height - margin.top - margin.bottom;
 
-    console.log(Object.values(parsedData));
     // Select the SVG element and clear it
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
