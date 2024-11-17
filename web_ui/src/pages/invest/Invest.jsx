@@ -7,6 +7,8 @@ import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
 import { DEFAULT_MARGIN } from "../../utils/utils.js";
 import { LinePlotSA } from "../../components/plot/invest/linePlotSA/index.js";
 import { LinePlotCRA } from "../../components/plot/invest/linePlotCRA/index.js";
+import { BarPlotNT } from "../../components/plot/invest/BarPlotNT/index.js";
+import { BarPlotCG } from "../../components/plot/invest/BarPlotCG/index.js";
 
 export const Invest = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -192,6 +194,38 @@ export const Invest = (props) => {
           <ResponsiveWrapper>
             {({ width, height }) => (
               <LinePlotCRA
+                data={filteredData}
+                width={width}
+                height={height}
+                margin={DEFAULT_MARGIN}
+              />
+            )}
+          </ResponsiveWrapper>
+        </Card>
+        <Card
+          title={"Número de Trablhares por Setor"}
+          info={information[0]}
+          setModal={setModal}
+        >
+          <ResponsiveWrapper>
+            {({ width, height }) => (
+              <BarPlotNT
+                data={filteredData}
+                width={width}
+                height={height}
+                margin={DEFAULT_MARGIN}
+              />
+            )}
+          </ResponsiveWrapper>
+        </Card>
+        <Card
+          title={"Classificação Global vs Financiamento de Capital de Risco"}
+          info={information[0]}
+          setModal={setModal}
+        >
+          <ResponsiveWrapper>
+            {({ width, height }) => (
+              <BarPlotCG
                 data={filteredData}
                 width={width}
                 height={height}

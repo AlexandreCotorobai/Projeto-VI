@@ -165,22 +165,6 @@ export const Inovation = (props) => {
           "col-span-full lg:col-span-8 grid grid-cols-4 lg:overflow-y-auto gap-2 pb-3"
         }
       >
-        <Card
-          title={"Fatalities over Time"}
-          info={information[0]}
-          setModal={setModal}
-        >
-          {/* <ResponsiveWrapper>
-            {({ width, height }) => (
-              <DeathLinePlot
-                data={filteredData}
-                width={width}
-                height={height}
-                margin={DEFAULT_MARGIN}
-              />
-            )}
-          </ResponsiveWrapper> */}
-        </Card>
         <Modal title={modal.title} content={modal.content} />
       </div>
     </div>
