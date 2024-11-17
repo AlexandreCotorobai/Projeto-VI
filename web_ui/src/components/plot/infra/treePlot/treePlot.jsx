@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { boundsCalculator } from "../../../utils/utils.js";
+import { boundsCalculator } from "../../../../utils/utils.js";
 import * as d3 from "d3";
 
 export const TreePlot = ({ data, width, height, margin }) => {

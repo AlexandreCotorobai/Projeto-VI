@@ -4,6 +4,9 @@ import information from "./information.json";
 import { Modal } from "../../components/modal/index.js";
 import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
+import { DEFAULT_MARGIN } from "../../utils/utils.js";
+import { LinePlotSA } from "../../components/plot/invest/linePlotSA/index.js";
+import { LinePlotCRA } from "../../components/plot/invest/linePlotCRA/index.js";
 
 export const Invest = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -166,20 +169,36 @@ export const Invest = (props) => {
         }
       >
         <Card
-          title={"Fatalities over Time"}
+          title={"Número de Startups por Ano"}
           info={information[0]}
           setModal={setModal}
         >
-          {/* <ResponsiveWrapper>
+          <ResponsiveWrapper>
             {({ width, height }) => (
-              <DeathLinePlot
+              <LinePlotSA
                 data={filteredData}
                 width={width}
                 height={height}
                 margin={DEFAULT_MARGIN}
               />
             )}
-          </ResponsiveWrapper> */}
+          </ResponsiveWrapper>
+        </Card>
+        <Card
+          title={"Financiamento de Capital de Risco por Ano"}
+          info={information[0]}
+          setModal={setModal}
+        >
+          <ResponsiveWrapper>
+            {({ width, height }) => (
+              <LinePlotCRA
+                data={filteredData}
+                width={width}
+                height={height}
+                margin={DEFAULT_MARGIN}
+              />
+            )}
+          </ResponsiveWrapper>
         </Card>
         <Modal title={modal.title} content={modal.content} />
       </div>

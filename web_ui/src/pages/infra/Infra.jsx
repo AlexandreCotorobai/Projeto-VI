@@ -5,9 +5,9 @@ import { DEFAULT_MARGIN } from "../../utils/utils.js";
 import { Modal } from "../../components/modal/index.js";
 import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
-import { SpiderPlot } from "../../components/plot/spiderPlot/index.js";
-import { TreePlot } from "../../components/plot/treePlot/index.js";
-import { LinePlot } from "../../components/plot/linePlot/index.js";
+import { SpiderPlot } from "../../components/plot/infra/spiderPlot/index.js";
+import { TreePlot } from "../../components/plot/infra/treePlot/index.js";
+import { LinePlot } from "../../components/plot/infra/linePlot/index.js";
 
 export const Infra = (props) => {
   const [years, setYears] = useState([]);
