@@ -16,10 +16,16 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
     // Obter os setores únicos
     const sectors = Array.from(
       new Set(countryData.map((d) => d["Tech Sector"]))
-    );
+    ).sort();
 
     // Atualizar as opções de setores
     setSectorOptions(sectors);
+
+    // Verificar se existe apenas um setor e selecionar automaticamente
+    if (sectors.length === 1) {
+      setSelectedSectors([sectors[0]]);
+      setShowDropdown(false);
+    }
 
     // Obter os anos únicos
     const years = Array.from(new Set(countryData.map((d) => d.Year)));
@@ -158,84 +164,86 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
 
   return (
     <div>
-      <div style={{ margin: "10px 0", position: "relative" }}>
-        <label
-          htmlFor="sector-select"
-          style={{
-            marginRight: "10px",
-            fontSize: "14px",
-            fontWeight: "500",
-          }}
-        >
-          Selecione os setores:
-        </label>
-        <div
-          onClick={() => setShowDropdown(!showDropdown)}
-          style={{
-            cursor: "pointer",
-            padding: "8px 10px",
-            border: "1px solid #ccc",
-            borderRadius: "4px",
-            width: "200px",
-            background: "#fff",
-            display: "inline-block",
-            fontSize: "14px",
-            position: "relative",
-          }}
-        >
-          Selecione os setores
-          <span
+      {sectorOptions.length > 1 && (
+        <div style={{ margin: "10px 0", position: "relative" }}>
+          <label
+            htmlFor="sector-select"
             style={{
-              position: "absolute",
-              right: "10px",
-              top: "50%",
-              transform: "translateY(-50%)",
-              pointerEvents: "none",
+              marginRight: "10px",
+              fontSize: "14px",
+              fontWeight: "500",
             }}
           >
-            ▼
-          </span>
-        </div>
-
-        {showDropdown && (
+            Selecione os setores:
+          </label>
           <div
+            onClick={() => setShowDropdown(!showDropdown)}
             style={{
+              cursor: "pointer",
+              padding: "8px 10px",
               border: "1px solid #ccc",
               borderRadius: "4px",
               width: "200px",
-              maxHeight: "150px",
-              overflowY: "auto",
               background: "#fff",
-              position: "absolute",
-              zIndex: 10,
-              marginTop: "5px",
-              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-              left: "29%",
-              marginLeft: "5px",
+              display: "inline-block",
+              fontSize: "14px",
+              position: "relative",
             }}
           >
-            {sectorOptions.map((sector) => (
-              <label
-                key={sector}
-                style={{
-                  display: "block",
-                  padding: "8px 10px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                }}
-              >
-                <input
-                  type="checkbox"
-                  checked={selectedSectors.includes(sector)}
-                  onChange={() => handleSectorChange(sector)}
-                  style={{ marginRight: "8px" }}
-                />
-                {sector}
-              </label>
-            ))}
+            Selecione os setores
+            <span
+              style={{
+                position: "absolute",
+                right: "10px",
+                top: "50%",
+                transform: "translateY(-50%)",
+                pointerEvents: "none",
+              }}
+            >
+              ▼
+            </span>
           </div>
-        )}
-      </div>
+
+          {showDropdown && (
+            <div
+              style={{
+                border: "1px solid #ccc",
+                borderRadius: "4px",
+                width: "200px",
+                maxHeight: "150px",
+                overflowY: "auto",
+                background: "#fff",
+                position: "absolute",
+                zIndex: 10,
+                marginTop: "5px",
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                left: "29%",
+                marginLeft: "5px",
+              }}
+            >
+              {sectorOptions.map((sector) => (
+                <label
+                  key={sector}
+                  style={{
+                    display: "block",
+                    padding: "8px 10px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={selectedSectors.includes(sector)}
+                    onChange={() => handleSectorChange(sector)}
+                    style={{ marginRight: "8px" }}
+                  />
+                  {sector}
+                </label>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
       <svg ref={svgRef} width={width} height={height}></svg>
     </div>
   );
