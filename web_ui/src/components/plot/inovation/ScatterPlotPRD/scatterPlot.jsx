@@ -1,35 +1,33 @@
 import { useEffect, useRef } from "react";
 import * as d3 from "d3";
 
-export const ScatterPlotCUS = ({ data, width, height, margin }) => {
+export const ScatterPlotPRD = ({ data, width, height, margin }) => {
   const svgRef = useRef();
 
   useEffect(() => {
     if (!data || data.length === 0) return;
 
     // Extrair as informações necessárias para o gráfico de dispersão
-    const plotData = data
-      .map((d) => ({
-        country: d["Country"], // Supondo que você tenha um campo 'Country' nos dados
-        uniColabs: +d["University Research Collaborations"],
-        startupNum: +d["Number of Startups"],
-      }))
-      .filter((d) => d.uniColabs > 0); // Filtrar valores inválidos para escala logarítmica
+    const plotData = data.map((d) => ({
+      country: d["Country"], // Supondo que você tenha um campo 'Country' nos dados
+      patents: +d["Number of Patents Filed (Annual)"],
+      rndInvestment: +d["R&D Investment (in USD)"],
+    }));
 
     console.log(plotData);
 
     // Definir as escalas para os eixos
     const xScale = d3
-      .scaleLog() // Escala logarítmica para o número de colaborações universitárias
+      .scaleLog() // Usar escala logarítmica para o investimento em R&D (para lidar com grandes variações)
       .domain([
-        d3.min(plotData, (d) => d.uniColabs),
-        d3.max(plotData, (d) => d.uniColabs),
+        d3.min(plotData, (d) => d.rndInvestment),
+        d3.max(plotData, (d) => d.rndInvestment),
       ])
       .range([0, width - margin.left - margin.right]);
 
     const yScale = d3
-      .scaleLinear() // Escala linear para o número de startups
-      .domain([0, d3.max(plotData, (d) => d.startupNum)])
+      .scaleLinear() // Escala linear para o número de patentes
+      .domain([0, d3.max(plotData, (d) => d.patents)])
       .range([height - margin.top - margin.bottom, 0]);
 
     // Limpar qualquer conteúdo anterior do gráfico
@@ -41,12 +39,12 @@ export const ScatterPlotCUS = ({ data, width, height, margin }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Eixo X
+    // Eixo X com ticks de 10 em 10
     g.append("g")
       .attr("transform", `translate(0,${height - margin.top - margin.bottom})`)
       .call(
-        d3.axisBottom(xScale).ticks(10, "~s") // Adicionar formatação amigável para valores logarítmicos
-      );
+        d3.axisBottom(xScale).ticks(10) // Usar a base 10 para intervalos consistentes
+      ); // Usar a base 10 para intervalos consistentes
 
     // Eixo Y
     g.append("g").call(d3.axisLeft(yScale));
@@ -56,8 +54,8 @@ export const ScatterPlotCUS = ({ data, width, height, margin }) => {
       .data(plotData)
       .enter()
       .append("circle")
-      .attr("cx", (d) => xScale(d.uniColabs)) // Escala X: colaborações universitárias
-      .attr("cy", (d) => yScale(d.startupNum)) // Escala Y: número de startups
+      .attr("cx", (d) => xScale(d.rndInvestment))
+      .attr("cy", (d) => yScale(d.patents))
       .attr("r", 5)
       .style("fill", (d) => {
         if (d.country === "Japan") return "red"; // Cor vermelha para o Japão

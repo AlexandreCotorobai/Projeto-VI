@@ -7,7 +7,8 @@ import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
 import { LinePlot } from "../../components/plot/inovation/linePlot/index.js";
 import { HistogramPlot } from "../../components/plot/inovation/histogramPlot/index.js";
-import { ScatterPlotCUS } from "../../components/plot/inovation/scatterPlotCUS/index.js";
+import { ScatterPlotPRD } from "../../components/plot/inovation/ScatterPlotPRD/index.js";
+import { ScatterPlotCUS } from "../../components/plot/inovation/ScatterPlotCUS/index.js";
 
 export const Inovation = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -248,13 +249,29 @@ export const Inovation = (props) => {
           </Card>
         )}
         <Card
-          title={"Colaborações Universitárias e Patentes "}
+          title={"Colaborações Universitárias e Patentes"}
           info={information[0]}
           setModal={setModal}
         >
           <ResponsiveWrapper>
             {({ width, height }) => (
               <ScatterPlotCUS
+                data={filteredData}
+                width={width}
+                height={height}
+                margin={DEFAULT_MARGIN}
+              />
+            )}
+          </ResponsiveWrapper>
+        </Card>
+        <Card
+          title={"Investimento em R&D e Número de Patentes"}
+          info={information[0]}
+          setModal={setModal}
+        >
+          <ResponsiveWrapper>
+            {({ width, height }) => (
+              <ScatterPlotPRD
                 data={filteredData}
                 width={width}
                 height={height}
