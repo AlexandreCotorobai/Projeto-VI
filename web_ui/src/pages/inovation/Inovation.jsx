@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useData } from "../../contexts/data.jsx";
 import information from "./information.json";
+import { DEFAULT_MARGIN } from "../../utils/utils.js";
 import { Modal } from "../../components/modal/index.js";
 import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
+import { LinePlot } from "../../components/plot/inovation/linePlot/linePlot.jsx";
 
 export const Inovation = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -165,6 +167,46 @@ export const Inovation = (props) => {
           "col-span-full lg:col-span-8 grid grid-cols-4 lg:overflow-y-auto gap-2 pb-3"
         }
       >
+        {(country == "all" || country == "China") && (
+          <Card
+            title={"Ranking Global Médio de Inovação por Setor por Ano - China"}
+            info={information[0]}
+            setModal={setModal}
+          >
+            <ResponsiveWrapper>
+              {({ width, height }) => (
+                <LinePlot
+                  allData={data}
+                  data={filteredData}
+                  country={"China"}
+                  width={width}
+                  height={height}
+                  margin={DEFAULT_MARGIN}
+                />
+              )}
+            </ResponsiveWrapper>
+          </Card>
+        )}
+        {(country == "all" || country == "Japan") && (
+          <Card
+            title={"Ranking Global Médio de Inovação por Setor por Ano - Japão"}
+            info={information[0]}
+            setModal={setModal}
+          >
+            <ResponsiveWrapper>
+              {({ width, height }) => (
+                <LinePlot
+                  allData={data}
+                  data={filteredData}
+                  country={"Japan"}
+                  width={width}
+                  height={height}
+                  margin={DEFAULT_MARGIN}
+                />
+              )}
+            </ResponsiveWrapper>
+          </Card>
+        )}
         <Modal title={modal.title} content={modal.content} />
       </div>
     </div>
