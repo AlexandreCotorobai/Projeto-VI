@@ -72,7 +72,10 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
 
     const xScale = d3
       .scaleTime()
-      .domain(d3.extent(averageData, (d) => d.year))
+      .domain([
+        new Date(d3.min(years), 0, 1), // Set the minimum value from years as a Date object
+        d3.max(averageData, (d) => d.year), // Max remains the latest year in averageData
+      ])
       .range([0, boundsWidth]);
 
     const yScale = d3
@@ -96,9 +99,11 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
         d3
           .axisBottom(xScale)
           .ticks(
-            years.length > 10 ? d3.timeYear.every(2) : d3.timeYear.every(1)
+            allYears.length > 10 // Verifica o número de anos no conjunto de dados
+              ? d3.timeYear.every(2)
+              : d3.timeYear.every(1) // Exibe todos os anos quando há poucos dados
           )
-          .tickFormat(d3.timeFormat("%Y"))
+          .tickFormat(d3.timeFormat("%Y")) // Formata os ticks como anos (YYYY)
       );
 
     g.append("g").call(d3.axisLeft(yScale));

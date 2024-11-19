@@ -6,6 +6,7 @@ import { Modal } from "../../components/modal/index.js";
 import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
 import { LinePlot } from "../../components/plot/inovation/linePlot/linePlot.jsx";
+import { HistogramPlot } from "../../components/plot/inovation/histogramPlot/histogramPlot.jsx";
 
 export const Inovation = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -197,6 +198,44 @@ export const Inovation = (props) => {
               {({ width, height }) => (
                 <LinePlot
                   allData={data}
+                  data={filteredData}
+                  country={"Japan"}
+                  width={width}
+                  height={height}
+                  margin={DEFAULT_MARGIN}
+                />
+              )}
+            </ResponsiveWrapper>
+          </Card>
+        )}
+        {(country == "all" || country == "China") && (
+          <Card
+            title={"Colaborações Universitárias e Patentes - China"}
+            info={information[0]}
+            setModal={setModal}
+          >
+            <ResponsiveWrapper>
+              {({ width, height }) => (
+                <HistogramPlot
+                  data={filteredData}
+                  country={"China"}
+                  width={width}
+                  height={height}
+                  margin={DEFAULT_MARGIN}
+                />
+              )}
+            </ResponsiveWrapper>
+          </Card>
+        )}
+        {(country == "all" || country == "Japan") && (
+          <Card
+            title={"Colaborações Universitárias e Patentes - Japão"}
+            info={information[0]}
+            setModal={setModal}
+          >
+            <ResponsiveWrapper>
+              {({ width, height }) => (
+                <HistogramPlot
                   data={filteredData}
                   country={"Japan"}
                   width={width}
