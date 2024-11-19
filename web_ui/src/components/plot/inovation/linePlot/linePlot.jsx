@@ -170,7 +170,7 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
   return (
     <div>
       {sectorOptions.length > 1 && (
-        <div style={{ margin: "10px 0", position: "relative" }}>
+        <div style={{ position: "relative" }}>
           <label
             htmlFor="sector-select"
             style={{
