@@ -1,1 +1,1 @@
-export * from "./histgramPlot";
+export * from "./histogramPlot";

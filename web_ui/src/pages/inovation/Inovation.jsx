@@ -5,8 +5,9 @@ import { DEFAULT_MARGIN } from "../../utils/utils.js";
 import { Modal } from "../../components/modal/index.js";
 import { Card } from "../../components/card/index.js";
 import { ResponsiveWrapper } from "../../components/responsiveWrapper/index.js";
-import { LinePlot } from "../../components/plot/inovation/linePlot/linePlot.jsx";
-import { HistogramPlot } from "../../components/plot/inovation/histogramPlot/histogramPlot.jsx";
+import { LinePlot } from "../../components/plot/inovation/linePlot/index.js";
+import { HistogramPlot } from "../../components/plot/inovation/histogramPlot/index.js";
+import { ScatterPlotCUS } from "../../components/plot/inovation/scatterPlotCUS/index.js";
 
 export const Inovation = (props) => {
   const [sectors, setSectors] = useState([]);
@@ -246,6 +247,22 @@ export const Inovation = (props) => {
             </ResponsiveWrapper>
           </Card>
         )}
+        <Card
+          title={"Colaborações Universitárias e Patentes "}
+          info={information[0]}
+          setModal={setModal}
+        >
+          <ResponsiveWrapper>
+            {({ width, height }) => (
+              <ScatterPlotCUS
+                data={filteredData}
+                width={width}
+                height={height}
+                margin={DEFAULT_MARGIN}
+              />
+            )}
+          </ResponsiveWrapper>
+        </Card>
         <Modal title={modal.title} content={modal.content} />
       </div>
     </div>
