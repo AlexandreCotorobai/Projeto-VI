@@ -178,16 +178,16 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
     if (hasChinaData) {
       legend
         .append("rect")
-        .attr("x", 0)
-        .attr("y", 0)
+        .attr("x", 92)
+        .attr("y", 2)
         .attr("width", 15)
         .attr("height", 15)
         .attr("fill", "#e63946");
 
       legend
         .append("text")
-        .attr("x", 20)
-        .attr("y", 12)
+        .attr("x", 112)
+        .attr("y", 14)
         .text("China")
         .style("font-size", "12px");
     }
@@ -195,7 +195,7 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
     if (hasJapanData) {
       legend
         .append("rect")
-        .attr("x", 0)
+        .attr("x", 92)
         .attr("y", hasChinaData ? 20 : 0)
         .attr("width", 15)
         .attr("height", 15)
@@ -203,7 +203,7 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
 
       legend
         .append("text")
-        .attr("x", 20)
+        .attr("x", 110)
         .attr("y", hasChinaData ? 32 : 12)
         .text("Japão")
         .style("font-size", "12px");

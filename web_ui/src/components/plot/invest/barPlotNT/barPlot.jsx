@@ -46,7 +46,7 @@ export const BarPlotNT = ({ data, width, height, margin }) => {
       .scaleBand()
       .domain(["China", "Japan"]) // Países no agrupamento
       .range([0, xScale.bandwidth()])
-      .padding(0.05);
+      .padding(0); // Remover o espaço entre as barras do mesmo setor
 
     const yScale = d3
       .scaleLinear()
@@ -134,9 +134,9 @@ export const BarPlotNT = ({ data, width, height, margin }) => {
           .html(
             `<strong>${
               d.country === "China" ? "China" : "Japão"
-            }</strong><br>Setor: ${groupedData.find(
-              (e) => e.China === d.value || e.Japan === d.value
-            )}<br>Trabalhadores: ${d.value.toFixed(0)}`
+            }</strong><br>Setor: ${
+              d.sector
+            }<br>Trabalhadores: ${d.value.toFixed(0)}`
           )
           .style("visibility", "visible");
       })
