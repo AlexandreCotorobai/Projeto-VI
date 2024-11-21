@@ -13,25 +13,20 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
     const countryData = data.filter((d) => d.Country === country);
     const allCountryData = allData.filter((d) => d.Country === country);
 
-    // Obter os setores únicos
     const sectors = Array.from(
       new Set(countryData.map((d) => d["Tech Sector"]))
     ).sort();
 
-    // Atualizar as opções de setores
     setSectorOptions(sectors);
 
-    // Verificar se existe apenas um setor e selecionar automaticamente
     if (sectors.length === 1) {
       setSelectedSectors([sectors[0]]);
       setShowDropdown(false);
     }
 
-    // Obter os anos únicos
     const years = Array.from(new Set(countryData.map((d) => d.Year)));
     const allYears = Array.from(new Set(allCountryData.map((d) => d.Year)));
 
-    // Calcular média geral para cada ano
     const averageData = allYears
       .map((year) => {
         const yearData = allCountryData.filter((d) => d.Year === year);
@@ -43,7 +38,6 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
       })
       .sort((a, b) => a.year - b.year);
 
-    // Agrupar os dados por setor e calcular médias por ano
     const parsedData = sectors.map((sector) => {
       const sectorData = countryData.filter((d) => d["Tech Sector"] === sector);
       const values = years
@@ -63,7 +57,6 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
       return { sector, values };
     });
 
-    // Configuração do gráfico
     const boundsWidth = width - margin.left - margin.right;
     const boundsHeight = height - margin.top - margin.bottom;
 
@@ -73,8 +66,8 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
     const xScale = d3
       .scaleTime()
       .domain([
-        new Date(d3.min(years), 0, 1), // Set the minimum value from years as a Date object
-        d3.max(averageData, (d) => d.year), // Max remains the latest year in averageData
+        new Date(d3.min(years), 0, 1),
+        d3.max(averageData, (d) => d.year),
       ])
       .range([0, boundsWidth]);
 
@@ -85,7 +78,7 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
         d3.max(
           parsedData.flatMap((d) => d.values),
           (d) => d.avgRanking
-        ),
+        ) + 1,
       ])
       .range([boundsHeight, 0]);
 
@@ -93,17 +86,31 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    // Adicionar grelha
+    g.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(yScale).tickSize(-boundsWidth).tickFormat(""))
+      .selectAll("line")
+      .style("stroke", "#e0e0e0")
+      .style("stroke-dasharray", "2,2");
+
+    g.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0,${boundsHeight})`)
+      .call(d3.axisBottom(xScale).tickSize(-boundsHeight).tickFormat(""))
+      .selectAll("line")
+      .style("stroke", "#e0e0e0")
+      .style("stroke-dasharray", "2,2");
+
     g.append("g")
       .attr("transform", `translate(0,${boundsHeight})`)
       .call(
         d3
           .axisBottom(xScale)
           .ticks(
-            allYears.length > 10 // Verifica o número de anos no conjunto de dados
-              ? d3.timeYear.every(2)
-              : d3.timeYear.every(1) // Exibe todos os anos quando há poucos dados
+            allYears.length > 10 ? d3.timeYear.every(2) : d3.timeYear.every(1)
           )
-          .tickFormat(d3.timeFormat("%Y")) // Formata os ticks como anos (YYYY)
+          .tickFormat(d3.timeFormat("%Y"))
       );
 
     g.append("g").call(d3.axisLeft(yScale));
@@ -113,6 +120,21 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
       .x((d) => xScale(d.year))
       .y((d) => yScale(d.avgRanking));
 
+    const colorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(sectors);
+
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("visibility", "hidden")
+      .style("position", "absolute")
+      .style("background", "white")
+      .style("padding", "5px")
+      .style("border-radius", "4px")
+      .style("border", "1px solid #ccc")
+      .style("font-size", "12px")
+      .style("pointer-events", "none");
+
     g.append("path")
       .datum(averageData)
       .attr("fill", "none")
@@ -120,8 +142,6 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
       .attr("stroke-dasharray", "4 4")
       .attr("stroke-width", 2)
       .attr("d", lineGenerator);
-
-    const colorScale = d3.scaleOrdinal(d3.schemeTableau10).domain(sectors);
 
     parsedData.forEach((sectorData) => {
       if (selectedSectors.includes(sectorData.sector)) {
@@ -132,15 +152,55 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
           .attr("stroke-width", 1.5)
           .attr("d", lineGenerator);
 
+        // Adicionar pontos nos dados
+        g.selectAll(`.dot-${sectorData.sector}`)
+          .data(sectorData.values)
+          .join("circle")
+          .attr("cx", (d) => xScale(d.year))
+          .attr("cy", (d) => yScale(d.avgRanking))
+          .attr("r", 4)
+          .style("fill", colorScale(sectorData.sector))
+          .on("mouseover", (event, d) => {
+            tooltip
+              .html(
+                `Setor: ${
+                  sectorData.sector
+                }<br>Ano: ${d.year.getFullYear()}<br>Ranking: ${d.avgRanking.toFixed(
+                  2
+                )}`
+              )
+              .style("visibility", "visible");
+          })
+          .on("mousemove", (event) => {
+            tooltip
+              .style("top", `${event.pageY - 10}px`)
+              .style("left", `${event.pageX + 10}px`);
+          })
+          .on("mouseout", () => tooltip.style("visibility", "hidden"));
+
         const lastPoint = sectorData.values[sectorData.values.length - 1];
         if (lastPoint) {
           g.append("text")
-            .attr("x", xScale(lastPoint.year) + 5)
+            .attr("x", xScale(lastPoint.year) - 50) // Ajustar posição da legenda
             .attr("y", yScale(lastPoint.avgRanking))
             .attr("dy", "0.35em")
             .style("fill", colorScale(sectorData.sector))
             .style("font-size", "10px")
-            .text(sectorData.sector);
+            .text(
+              sectorData.sector == "AI"
+                ? "IA"
+                : sectorData.sector == "Biotechnology"
+                ? "Biotecnologia"
+                : sectorData.sector == "Cloud Computing"
+                ? "Computação em Nuvem"
+                : sectorData.sector == "Robotics"
+                ? "Robótica"
+                : sectorData.sector == "Semiconductor"
+                ? "Semicondutores"
+                : sectorData.sector
+            );
+          {
+          }
         }
       }
     });
@@ -214,7 +274,7 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
               style={{
                 border: "1px solid #ccc",
                 borderRadius: "4px",
-                width: "200px",
+                width: "220px",
                 maxHeight: "150px",
                 overflowY: "auto",
                 background: "#fff",
@@ -222,8 +282,7 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
                 zIndex: 10,
                 marginTop: "5px",
                 boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
-                left: "29%",
-                marginLeft: "5px",
+                left: "26%",
               }}
             >
               {sectorOptions.map((sector) => (
@@ -242,7 +301,19 @@ export const LinePlot = ({ allData, data, country, width, height, margin }) => {
                     onChange={() => handleSectorChange(sector)}
                     style={{ marginRight: "8px" }}
                   />
-                  {sector}
+                  {sector == "AI"
+                    ? "IA"
+                    : sector == "Biotechnology"
+                    ? "Biotecnologia"
+                    : sector == "Cloud Computing"
+                    ? "Computação em Nuvem"
+                    : sector == "Robotics"
+                    ? "Robótica"
+                    : sector == "Semiconductor"
+                    ? "Semicondutores"
+                    : sector == "Telecommunications"
+                    ? "Telecomunicações"
+                    : sector}
                 </label>
               ))}
             </div>
