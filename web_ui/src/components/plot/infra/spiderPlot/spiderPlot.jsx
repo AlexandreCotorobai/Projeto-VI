@@ -174,7 +174,7 @@ export const SpiderPlot = ({ data, width, height }) => {
             <rect width="15" height="15" fill="#e63946" />
             <text
               x="20"
-              y="12"
+              y="9"
               style={{ fill: "black", alignmentBaseline: "middle" }}
             >
               China
@@ -184,7 +184,7 @@ export const SpiderPlot = ({ data, width, height }) => {
             <rect width="15" height="15" fill="#345d7e" />
             <text
               x="20"
-              y="12"
+              y="9"
               style={{ fill: "black", alignmentBaseline: "middle" }}
             >
               Japan
