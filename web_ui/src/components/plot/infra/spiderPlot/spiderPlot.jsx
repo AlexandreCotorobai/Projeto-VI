@@ -5,7 +5,7 @@ import React, { useEffect, useState, useRef } from "react";
 const MARGIN = 30;
 
 export const SpiderPlot = ({ data, width, height }) => {
-  const tooltipRef = useRef(); // Referência para a tooltip
+  const tooltipRef = useRef();
   const [svgElements, setSvgElements] = useState({
     linePaths: [],
     xScale: null,
@@ -164,6 +164,32 @@ export const SpiderPlot = ({ data, width, height }) => {
               })}
             </g>
           ))}
+        </g>
+        {/* Legenda */}
+        <g
+          transform={`translate(${MARGIN}, ${height - MARGIN * 2})`}
+          style={{ fontSize: "12px" }}
+        >
+          <g transform="translate(0, 0)">
+            <rect width="15" height="15" fill="#e63946" />
+            <text
+              x="20"
+              y="12"
+              style={{ fill: "black", alignmentBaseline: "middle" }}
+            >
+              China
+            </text>
+          </g>
+          <g transform="translate(0, 20)">
+            <rect width="15" height="15" fill="#345d7e" />
+            <text
+              x="20"
+              y="12"
+              style={{ fill: "black", alignmentBaseline: "middle" }}
+            >
+              Japan
+            </text>
+          </g>
         </g>
       </svg>
       {/* Tooltip */}
