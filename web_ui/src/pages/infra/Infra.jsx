@@ -16,7 +16,6 @@ export const Infra = (props) => {
   const [end, setEnd] = useState("");
   const [modal, setModal] = useState({ title: "", content: "" });
 
-  const sectorRef = useRef(null);
   const countryRef = useRef(null);
   const startRef = useRef(null);
   const endRef = useRef(null);
@@ -70,17 +69,22 @@ export const Infra = (props) => {
       }
       id={"container"}
     >
+      {/* Filtros */}
       <div className={"col-span-full lg:col-span-2"}>
-        <div className={"card bg-base-100"}>
+        <div className={"card bg-[#345d7e] rounded-lg shadow-lg"}>
           <div className={"card-body"}>
-            <div className={"card-title mx-auto text-3xl"}>Filtros</div>
-            <div className={"flex flex-col gap-2 m-5"}>
+            <div className={"card-title mx-auto text-3xl text-white"}>
+              Filtros
+            </div>
+            <div className={"flex flex-col gap-4 m-5"}>
               <div className="form-control">
                 <label className="label">
-                  <span className="label-text font-bold text-xl">País</span>
+                  <span className="label-text font-bold text-lg text-white">
+                    País
+                  </span>
                 </label>
                 <select
-                  className="select select-bordered"
+                  className="select select-bordered border-none bg-white text-[#345d7e]"
                   onChange={(e) => setCountry(e.target.value)}
                   ref={countryRef}
                 >
@@ -90,10 +94,12 @@ export const Infra = (props) => {
                 </select>
 
                 <label className="label">
-                  <span className="label-text font-bold text-xl">Desde</span>
+                  <span className="label-text font-bold text-lg text-white">
+                    Desde
+                  </span>
                 </label>
                 <select
-                  className="select select-bordered"
+                  className="select select-bordered border-none bg-white text-[#345d7e]"
                   onChange={(e) => setStart(e.target.value)}
                   ref={startRef}
                 >
@@ -106,10 +112,12 @@ export const Infra = (props) => {
                 </select>
 
                 <label className="label">
-                  <span className="label-text font-bold text-xl">Até</span>
+                  <span className="label-text font-bold text-lg text-white">
+                    Até
+                  </span>
                 </label>
                 <select
-                  className="select select-bordered"
+                  className="select select-bordered border-none bg-white text-[#345d7e]"
                   onChange={(e) => setEnd(e.target.value)}
                   ref={endRef}
                 >
@@ -123,18 +131,21 @@ export const Infra = (props) => {
               </div>
 
               <button
-                className={"btn btn-block bg-blue-500 text-white"}
+                className={
+                  "btn btn-block bg-[#e63946] hover:bg-[#b22d34] text-white font-bold rounded-lg"
+                }
                 onClick={clearFilters}
               >
-                Clear Filters
+                Limpar Filtros
               </button>
             </div>
           </div>
         </div>
       </div>
+      {/* Gráficos */}
       <div
         className={
-          "col-span-full lg:col-span-8 grid grid-cols-4 lg:overflow-y-auto gap-2 pb-3 felx"
+          "col-span-full lg:col-span-8 grid grid-cols-4 lg:overflow-y-auto gap-2 pb-3"
         }
       >
         {(country === "China" || country === "all") && (
