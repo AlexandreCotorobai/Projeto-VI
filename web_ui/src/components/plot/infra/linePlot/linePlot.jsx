@@ -181,10 +181,11 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .text("Valor (%)");
 
     // Add the legend for 5G Network Coverage
-    g.append("circle")
-      .attr("cx", boundsWidth - 96)
-      .attr("cy", boundsHeight - 270)
-      .attr("r", 6)
+    g.append("rect")
+      .attr("x", boundsWidth - 105)
+      .attr("y", boundsHeight - 277)
+      .attr("width", 15)
+      .attr("height", 15)
       .style("fill", "#e63946");
 
     g.append("text")
@@ -194,10 +195,11 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .text("Cobertura 5G");
 
     // Add the legend for Internet Penetration
-    g.append("circle")
-      .attr("cx", boundsWidth - 148)
-      .attr("cy", boundsHeight - 295)
-      .attr("r", 6)
+    g.append("rect")
+      .attr("x", boundsWidth - 157)
+      .attr("y", boundsHeight - 302)
+      .attr("width", 15)
+      .attr("height", 15)
       .style("fill", "#345d7e");
 
     g.append("text")
