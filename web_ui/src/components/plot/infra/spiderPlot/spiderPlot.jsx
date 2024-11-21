@@ -88,7 +88,8 @@ export const SpiderPlot = ({ data, width, height }) => {
     const linePaths = countries
       .map((country) => ({
         path: generateLinePath(parsedData[country]),
-        color: country === "China" ? "blue" : "red",
+        color: country === "China" ? "#e63946" : "#345d7e", // Cores para China e Japão
+        country,
       }))
       .filter((line) => line.path !== null); // Filtrar caminhos nulos
 
@@ -114,6 +115,30 @@ export const SpiderPlot = ({ data, width, height }) => {
             fill={lineData.color}
             fillOpacity={0.1}
           />
+        ))}
+      </g>
+      {/* Legenda */}
+      <g transform={`translate(${MARGIN}, ${height - MARGIN * 2})`}>
+        {svgElements.linePaths.map((lineData, index) => (
+          <g key={index} transform={`translate(0, ${index * 20})`}>
+            <rect
+              x={0}
+              y={-10}
+              width={15}
+              height={15}
+              fill={lineData.color}
+              stroke={lineData.color}
+            />
+            <text
+              x={20}
+              y={0}
+              alignmentBaseline="middle"
+              fontSize={12}
+              fill="#000"
+            >
+              {lineData.country}
+            </text>
+          </g>
         ))}
       </g>
     </svg>

@@ -96,7 +96,7 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
     g.append("path")
       .datum(Object.values(parsedData))
       .attr("fill", "none")
-      .attr("stroke", "steelblue")
+      .attr("stroke", "#e63946")
       .attr("stroke-width", 1.5)
       .attr("d", lineGenerator5G);
 
@@ -104,7 +104,7 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
     g.append("path")
       .datum(Object.values(parsedData))
       .attr("fill", "none")
-      .attr("stroke", "green")
+      .attr("stroke", "#345d7e")
       .attr("stroke-width", 1.5)
       .attr("d", lineGeneratorInternet);
 
@@ -116,7 +116,7 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .attr("cx", (d) => xScale(d.year))
       .attr("cy", (d) => yScale(d.avg5G))
       .attr("r", 4)
-      .style("fill", "steelblue")
+      .style("fill", "#e63946")
       .on("mouseover", function (event, d) {
         tooltip
           .html(
@@ -143,7 +143,7 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .attr("cx", (d) => xScale(d.year))
       .attr("cy", (d) => yScale(d.avgInternet))
       .attr("r", 4)
-      .style("fill", "green")
+      .style("fill", "#345d7e")
       .on("mouseover", function (event, d) {
         tooltip
           .html(
@@ -181,7 +181,7 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .attr("cx", boundsWidth - 110)
       .attr("cy", boundsHeight - 270)
       .attr("r", 6)
-      .style("fill", "steelblue");
+      .style("fill", "#e63946");
 
     g.append("text")
       .attr("x", boundsWidth - 102)
@@ -194,7 +194,7 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .attr("cx", boundsWidth - 148)
       .attr("cy", boundsHeight - 295)
       .attr("r", 6)
-      .style("fill", "green");
+      .style("fill", "#345d7e");
 
     g.append("text")
       .attr("x", boundsWidth - 140)
