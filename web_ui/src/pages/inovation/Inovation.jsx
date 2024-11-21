@@ -129,7 +129,7 @@ export const Inovation = (props) => {
                   onChange={(e) => setCountry(e.target.value)}
                   ref={countryRef}
                 >
-                  <option value={"all"}>All</option>
+                  <option value={"all"}>Todos</option>
                   <option value={"China"}>China</option>
                   <option value={"Japan"}>Japão</option>
                 </select>
