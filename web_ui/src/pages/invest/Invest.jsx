@@ -102,10 +102,22 @@ export const Invest = (props) => {
                   onChange={(e) => setSector(e.target.value)}
                   ref={sectorRef}
                 >
-                  <option value="all">All</option>
+                  <option value="all">Todos</option>
                   {sectors.map((sector) => (
                     <option key={sector} value={sector}>
-                      {sector}
+                      {sector == "AI"
+                        ? "IA"
+                        : sector == "Biotechnology"
+                        ? "Biotecnologia"
+                        : sector == "Cloud Computing"
+                        ? "Computação em Nuvem"
+                        : sector == "Robotics"
+                        ? "Robótica"
+                        : sector == "Semiconductor"
+                        ? "Semicondutores"
+                        : sector == "Telecommunications"
+                        ? "Telecomunicações"
+                        : sector}
                     </option>
                   ))}
                 </select>

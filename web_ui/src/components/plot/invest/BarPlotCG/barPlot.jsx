@@ -31,6 +31,10 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
       };
     });
 
+    // Verificar se há dados para os países
+    const hasChinaData = groupedData.some((d) => d.chinaRanking > 0);
+    const hasJapanData = groupedData.some((d) => d.japanRanking > 0);
+
     // Dimensões do gráfico
     const boundsWidth = width - margin.left - margin.right;
     const boundsHeight = height - margin.top - margin.bottom;
@@ -166,40 +170,44 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
       .style("text-anchor", "middle")
       .text("Ranking de Inovação Global");
 
-    // Legenda
+    // Legenda condicional
     const legend = svg
       .append("g")
       .attr("transform", `translate(${boundsWidth - 100},${margin.top})`);
 
-    legend
-      .append("rect")
-      .attr("x", 94)
-      .attr("y", 1)
-      .attr("width", 15)
-      .attr("height", 15)
-      .attr("fill", "#e63946");
+    if (hasChinaData) {
+      legend
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 15)
+        .attr("height", 15)
+        .attr("fill", "#e63946");
 
-    legend
-      .append("text")
-      .attr("x", 114)
-      .attr("y", 13)
-      .text("China")
-      .style("font-size", "12px");
+      legend
+        .append("text")
+        .attr("x", 20)
+        .attr("y", 12)
+        .text("China")
+        .style("font-size", "12px");
+    }
 
-    legend
-      .append("rect")
-      .attr("x", 94)
-      .attr("y", 20)
-      .attr("width", 15)
-      .attr("height", 15)
-      .attr("fill", "#345d7e");
+    if (hasJapanData) {
+      legend
+        .append("rect")
+        .attr("x", 0)
+        .attr("y", hasChinaData ? 20 : 0)
+        .attr("width", 15)
+        .attr("height", 15)
+        .attr("fill", "#345d7e");
 
-    legend
-      .append("text")
-      .attr("x", 112)
-      .attr("y", 32)
-      .text("Japão")
-      .style("font-size", "12px");
+      legend
+        .append("text")
+        .attr("x", 20)
+        .attr("y", hasChinaData ? 32 : 12)
+        .text("Japão")
+        .style("font-size", "12px");
+    }
   }, [data, width, height, margin]);
 
   return <svg ref={svgRef} width={width} height={height}></svg>;
