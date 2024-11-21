@@ -176,25 +176,25 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
         `translate(${boundsWidth / 2},${boundsHeight + margin.bottom - 10})`
       )
       .style("text-anchor", "middle")
-      .text("Year");
+      .text("Ano");
 
     g.append("text")
       .attr("transform", `translate(-40,${boundsHeight / 2}) rotate(-90)`)
       .style("text-anchor", "middle")
-      .text("Percentage (%)");
+      .text("Valor (%)");
 
     // Add the legend for 5G Network Coverage
     g.append("circle")
-      .attr("cx", boundsWidth - 110)
+      .attr("cx", boundsWidth - 96)
       .attr("cy", boundsHeight - 270)
       .attr("r", 6)
       .style("fill", "#e63946");
 
     g.append("text")
-      .attr("x", boundsWidth - 102)
+      .attr("x", boundsWidth - 88)
       .attr("y", boundsHeight - 270)
       .attr("dy", ".35em")
-      .text("5G Coverage (%)");
+      .text("Cobertura 5G");
 
     // Add the legend for Internet Penetration
     g.append("circle")
@@ -207,7 +207,7 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .attr("x", boundsWidth - 140)
       .attr("y", boundsHeight - 295)
       .attr("dy", ".35em")
-      .text("Internet Penetration (%)");
+      .text("Penetração de Internet");
   }, [data, width, height, margin, country]);
 
   return <svg ref={svgRef} width={width} height={height}></svg>;
