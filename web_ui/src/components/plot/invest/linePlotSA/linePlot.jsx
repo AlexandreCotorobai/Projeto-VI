@@ -133,11 +133,9 @@ export const LinePlotSA = ({ data, width, height, margin }) => {
         .on("mouseover", (event, d) => {
           tooltip
             .html(
-              `<strong>Year:</strong> ${d3.timeFormat("%Y")(
+              `<strong>Ano:</strong> ${d3.timeFormat("%Y")(
                 d.year
-              )}<br><strong>Venture Capital:</strong> ${d.sumStartupsChina.toFixed(
-                2
-              )}B USD`
+              )}<br><strong>Número de Startups:</strong> ${d.sumStartupsChina}`
             )
             .style("visibility", "visible");
         })
@@ -184,11 +182,9 @@ export const LinePlotSA = ({ data, width, height, margin }) => {
         .on("mouseover", (event, d) => {
           tooltip
             .html(
-              `<strong>Year:</strong> ${d3.timeFormat("%Y")(
+              `<strong>Ano:</strong> ${d3.timeFormat("%Y")(
                 d.year
-              )}<br><strong>Venture Capital:</strong> ${d.sumStartupsChina.toFixed(
-                2
-              )}B USD`
+              )}<br><strong>Número de Startups:</strong> ${d.sumStartupsJapan}`
             )
             .style("visibility", "visible");
         })

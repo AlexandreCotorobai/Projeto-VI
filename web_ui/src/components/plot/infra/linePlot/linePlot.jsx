@@ -120,16 +120,11 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .on("mouseover", function (event, d) {
         tooltip
           .html(
-            `<strong>5G Coverage:</strong> ${d.avg5G.toFixed(
-              2
-            )}%<br><strong>Year:</strong> ${d3.timeFormat("%Y")(d.year)}`
-          )
-          .html(
-            `<strong>Year:</strong> ${d3.timeFormat("%Y")(
+            `<strong>Ano::</strong> ${d3.timeFormat("%Y")(
               d.year
-            )}<br><strong>Venture Capital:</strong> ${d.sumStartupsChina.toFixed(
+            )}<br><strong>Penetração de Internet:</strong> ${d.avg5G.toFixed(
               2
-            )}B USD`
+            )}%`
           )
           .style("visibility", "visible");
       })
@@ -154,9 +149,11 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .on("mouseover", function (event, d) {
         tooltip
           .html(
-            `<strong>Internet Penetration:</strong> ${d.avgInternet.toFixed(
+            `<strong>Ano::</strong> ${d3.timeFormat("%Y")(
+              d.year
+            )}<br><strong>Penetração de Internet:</strong> ${d.avgInternet.toFixed(
               2
-            )}%<br><strong>Year:</strong> ${d3.timeFormat("%Y")(d.year)}`
+            )}%`
           )
           .style("visibility", "visible");
       })
