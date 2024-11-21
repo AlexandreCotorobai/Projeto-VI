@@ -159,7 +159,7 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
         `translate(${boundsWidth / 2},${boundsHeight + margin.bottom - 5})`
       )
       .style("text-anchor", "middle")
-      .text("Sectores");
+      .text("Setores");
 
     g.append("text")
       .attr("transform", `translate(-35,${boundsHeight / 2}) rotate(-90)`)
