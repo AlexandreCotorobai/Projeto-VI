@@ -7,17 +7,13 @@ export const LinePlotCRA = ({ data, width, height, margin }) => {
   useEffect(() => {
     if (!data || data.length === 0) return;
 
-    // Agrupar dados por ano e calcular médias, substituindo valores null por 0
-    const parsedData = {}; // Objeto onde os dados serão armazenados
-
-    // Obtém os anos únicos presentes no conjunto de dados
+    // Agrupar dados por ano e calcular médias
+    const parsedData = {};
     const years = Array.from(new Set(data.map((d) => d.Year)));
 
     years.forEach((year) => {
-      // Filtra os dados para o ano específico
       const yearData = data.filter((d) => d.Year === year);
 
-      // Calcula a média de 5G Network Coverage (%) e Internet Penetration (%)
       const sumStartupsChina =
         d3.sum(
           yearData.filter((d) => d.Country === "China"),
@@ -29,122 +25,209 @@ export const LinePlotCRA = ({ data, width, height, margin }) => {
           (d) => +d["Venture Capital Funding (in USD)"]
         ) / 1000000000;
 
-      // Armazena os resultados no objeto parsedData
       parsedData[year] = {
-        year: new Date(year), // Converte o ano para um objeto Date
-        sumStartupsChina: sumStartupsChina || 0, // Substitui valores null ou undefined por 0
-        sumStartupsJapan: sumStartupsJapan || 0, // Substitui valores null ou undefined por 0
+        year: new Date(year),
+        sumStartupsChina: sumStartupsChina || null,
+        sumStartupsJapan: sumStartupsJapan || null,
       };
     });
 
-    // Set up the margins and dimensions for the chart
     const boundsWidth = width - margin.left - margin.right;
     const boundsHeight = height - margin.top - margin.bottom;
-    // Select the SVG element and clear it
+
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    // Set up the scales for the axes
     const xScale = d3
       .scaleTime()
-      .domain(d3.extent(Object.values(parsedData), (d) => d.year)) // X scale based on years
+      .domain(d3.extent(Object.values(parsedData), (d) => d.year))
       .range([0, boundsWidth]);
 
     const yScale = d3
       .scaleLinear()
       .domain([
-        0,
+        d3.min(Object.values(parsedData), (d) =>
+          Math.min(
+            d.sumStartupsChina || Infinity,
+            d.sumStartupsJapan || Infinity
+          )
+        ) - 100,
         d3.max(Object.values(parsedData), (d) =>
-          Math.max(d.sumStartupsChina, d.sumStartupsJapan)
-        ),
+          Math.max(
+            d.sumStartupsChina || -Infinity,
+            d.sumStartupsJapan || -Infinity
+          )
+        ) + 150,
       ])
       .range([boundsHeight, 0]);
 
-    // Set up the line generators for 5G Network Coverage and Internet Penetration
     const lineGeneratorChina = d3
       .line()
+      .defined((d) => d.sumStartupsChina !== null) // Ensure the line is drawn only if data exists
       .x((d) => xScale(d.year))
       .y((d) => yScale(d.sumStartupsChina));
 
     const lineGeneratorJapan = d3
       .line()
+      .defined((d) => d.sumStartupsJapan !== null) // Ensure the line is drawn only if data exists
       .x((d) => xScale(d.year))
       .y((d) => yScale(d.sumStartupsJapan));
 
-    // Append the chart group
     const g = svg
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Draw the axes
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("visibility", "hidden")
+      .style("position", "absolute")
+      .style("background", "white")
+      .style("padding", "5px")
+      .style("border-radius", "5px")
+      .style("border", "1px solid #ccc")
+      .style("font-size", "12px")
+      .style("pointer-events", "none");
+
+    // Grelha nos eixos
+    g.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(yScale).tickSize(-boundsWidth).tickFormat(""))
+      .selectAll("line")
+      .style("stroke", "#e0e0e0")
+      .style("stroke-dasharray", "2,2");
+
+    g.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0,${boundsHeight})`)
+      .call(d3.axisBottom(xScale).tickSize(-boundsHeight).tickFormat(""))
+      .selectAll("line")
+      .style("stroke", "#e0e0e0")
+      .style("stroke-dasharray", "2,2");
+
+    // Eixos principais
     g.append("g")
       .attr("transform", `translate(0,${boundsHeight})`)
-      .call(
-        d3
-          .axisBottom(xScale)
-          .ticks(
-            years.length > 10 // Verifica o número de anos no conjunto de dados
-              ? d3.timeYear.every(2)
-              : d3.timeYear.every(1) // Exibe todos os anos quando há poucos dados
-          )
-          .tickFormat(d3.timeFormat("%Y")) // Formata os ticks como anos (YYYY)
-      );
+      .call(d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y")));
 
     g.append("g").call(d3.axisLeft(yScale));
 
-    // Add the line for 5G Network Coverage
+    // Linha para China
     g.append("path")
-      .datum(Object.values(parsedData)) // Pass the array of parsed data
+      .datum(Object.values(parsedData))
       .attr("fill", "none")
-      .attr("stroke", "steelblue")
+      .attr("stroke", "#e63946")
       .attr("stroke-width", 1.5)
       .attr("d", lineGeneratorChina);
 
-    // Add the line for Internet Penetration
+    // Linha para Japão
     g.append("path")
-      .datum(Object.values(parsedData)) // Pass the array of parsed data
+      .datum(Object.values(parsedData))
       .attr("fill", "none")
-      .attr("stroke", "green")
+      .attr("stroke", "#345d7e")
       .attr("stroke-width", 1.5)
       .attr("d", lineGeneratorJapan);
 
-    // Add the legend for 5G Network Coverage
-    g.append("circle")
-      .attr("cx", boundsWidth - 50)
-      .attr("cy", 20)
-      .attr("r", 6)
-      .style("fill", "steelblue");
+    // Pontos e tooltips para China
+    g.selectAll(".dot-china")
+      .data(
+        Object.values(parsedData).filter((d) => d.sumStartupsChina !== null)
+      ) // Only show points with data
+      .join("circle")
+      .attr("class", "dot-china")
+      .attr("cx", (d) => xScale(d.year))
+      .attr("cy", (d) => yScale(d.sumStartupsChina))
+      .attr("r", 4)
+      .attr("fill", "#e63946")
+      .on("mouseover", (event, d) => {
+        tooltip
+          .html(
+            `<strong>Year:</strong> ${d3.timeFormat("%Y")(
+              d.year
+            )}<br><strong>Venture Capital:</strong> ${d.sumStartupsChina.toFixed(
+              2
+            )}B USD`
+          )
+          .style("visibility", "visible");
+      })
+      .on("mousemove", (event) => {
+        tooltip
+          .style("top", `${event.pageY - 10}px`)
+          .style("left", `${event.pageX + 10}px`);
+      })
+      .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
-    g.append("text")
-      .attr("x", boundsWidth - 40)
-      .attr("y", 20)
-      .attr("dy", ".35em")
-      .text("China");
+    // Pontos e tooltips para Japão
+    g.selectAll(".dot-japan")
+      .data(
+        Object.values(parsedData).filter((d) => d.sumStartupsJapan !== null)
+      ) // Only show points with data
+      .join("circle")
+      .attr("class", "dot-japan")
+      .attr("cx", (d) => xScale(d.year))
+      .attr("cy", (d) => yScale(d.sumStartupsJapan))
+      .attr("r", 4)
+      .attr("fill", "#345d7e")
+      .on("mouseover", (event, d) => {
+        tooltip
+          .html(
+            `<strong>Year:</strong> ${d3.timeFormat("%Y")(
+              d.year
+            )}<br><strong>Venture Capital:</strong> ${d.sumStartupsChina.toFixed(
+              2
+            )}B USD`
+          )
+          .style("visibility", "visible");
+      })
+      .on("mousemove", (event) => {
+        tooltip
+          .style("top", `${event.pageY - 10}px`)
+          .style("left", `${event.pageX + 10}px`);
+      })
+      .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
-    // Add the legend for Internet Penetration
-    g.append("circle")
-      .attr("cx", boundsWidth - 50)
-      .attr("r", 6)
-      .style("fill", "green");
-
-    g.append("text")
-      .attr("x", boundsWidth - 40)
-      .attr("dy", ".35em")
-      .text("Japão");
-
-    // Add labels
+    // Labels
     g.append("text")
       .attr(
         "transform",
-        `translate(${width / 3},${height - margin.bottom + 5})`
+        `translate(${boundsWidth / 2},${boundsHeight + margin.bottom - 10})`
       )
-      .text("Year");
-
-    // Add labels
-    g.append("text")
-      .attr("transform", `translate(-30,${height / 2 - 30}) rotate(-90)`)
       .style("text-anchor", "middle")
-      .text("Financiamento de Capital de Risco (x10^9 USD)");
+      .text("Ano");
+
+    g.append("text")
+      .attr("transform", `translate(-40,${boundsHeight / 2}) rotate(-90)`)
+      .style("text-anchor", "middle")
+      .text("Financiamento de capital de risco (em Bilhões USD)");
+
+    if (Object.values(parsedData).some((d) => d.sumStartupsChina !== null)) {
+      g.append("circle")
+        .attr("cx", boundsWidth - 48)
+        .attr("cy", boundsHeight - 270)
+        .attr("r", 6)
+        .style("fill", "#e63946");
+
+      g.append("text")
+        .attr("x", boundsWidth - 40)
+        .attr("y", boundsHeight - 270)
+        .attr("dy", ".35em")
+        .text("China");
+    }
+
+    if (Object.values(parsedData).some((d) => d.sumStartupsJapan !== null)) {
+      g.append("circle")
+        .attr("cx", boundsWidth - 50)
+        .attr("cy", boundsHeight - 295)
+        .attr("r", 6)
+        .style("fill", "#345d7e");
+
+      g.append("text")
+        .attr("x", boundsWidth - 42)
+        .attr("y", boundsHeight - 295)
+        .attr("dy", ".35em")
+        .text("Japão");
+    }
   }, [data, width, height, margin]);
 
   return <svg ref={svgRef} width={width} height={height}></svg>;

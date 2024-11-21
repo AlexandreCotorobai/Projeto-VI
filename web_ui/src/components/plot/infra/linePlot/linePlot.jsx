@@ -124,6 +124,13 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
               2
             )}%<br><strong>Year:</strong> ${d3.timeFormat("%Y")(d.year)}`
           )
+          .html(
+            `<strong>Year:</strong> ${d3.timeFormat("%Y")(
+              d.year
+            )}<br><strong>Venture Capital:</strong> ${d.sumStartupsChina.toFixed(
+              2
+            )}B USD`
+          )
           .style("visibility", "visible");
       })
       .on("mousemove", function (event) {
@@ -166,7 +173,7 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
     g.append("text")
       .attr(
         "transform",
-        `translate(${boundsWidth / 2},${boundsHeight + margin.bottom})`
+        `translate(${boundsWidth / 2},${boundsHeight + margin.bottom - 10})`
       )
       .style("text-anchor", "middle")
       .text("Year");
