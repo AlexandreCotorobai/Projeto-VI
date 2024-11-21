@@ -178,26 +178,26 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
 
     // Add the legend for 5G Network Coverage
     g.append("circle")
-      .attr("cx", boundsWidth - 126)
+      .attr("cx", boundsWidth - 110)
       .attr("cy", boundsHeight - 270)
       .attr("r", 6)
       .style("fill", "steelblue");
 
     g.append("text")
-      .attr("x", boundsWidth - 118)
+      .attr("x", boundsWidth - 102)
       .attr("y", boundsHeight - 270)
       .attr("dy", ".35em")
       .text("5G Coverage (%)");
 
     // Add the legend for Internet Penetration
     g.append("circle")
-      .attr("cx", boundsWidth - 170)
+      .attr("cx", boundsWidth - 148)
       .attr("cy", boundsHeight - 295)
       .attr("r", 6)
       .style("fill", "green");
 
     g.append("text")
-      .attr("x", boundsWidth - 162)
+      .attr("x", boundsWidth - 140)
       .attr("y", boundsHeight - 295)
       .attr("dy", ".35em")
       .text("Internet Penetration (%)");
