@@ -1,15 +1,17 @@
 import * as d3 from "d3";
 import { INNER_RADIUS, SpiderGrid } from "./grid.jsx";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 
 const MARGIN = 30;
 
 export const SpiderPlot = ({ data, width, height }) => {
+  const tooltipRef = useRef(); // Referência para a tooltip
   const [svgElements, setSvgElements] = useState({
     linePaths: [],
     xScale: null,
     axisConfig: [],
     outerRadius: 0,
+    points: [],
   });
 
   useEffect(() => {
@@ -28,7 +30,6 @@ export const SpiderPlot = ({ data, width, height }) => {
 
     let parsedData = {};
 
-    // Agrupar dados por país e setor de tecnologia e calcular médias, substituindo valores null por 0
     countries.forEach((country) => {
       parsedData[country] = {};
       sectors.forEach((sector) => {
@@ -36,11 +37,10 @@ export const SpiderPlot = ({ data, width, height }) => {
           (d) => d.Country === country && d["Tech Sector"] === sector
         );
         const value = d3.mean(sectorData, (d) => +d["Market Share (%)"]);
-        parsedData[country][sector] = value || 0; // Substituir null por 0
+        parsedData[country][sector] = value || 0;
       });
     });
 
-    // Calcular o máximo global para o escalonamento
     const maxValue = d3.max(Object.values(parsedData).flatMap(Object.values));
 
     const axisConfig = sectors.map((sector) => ({
@@ -55,7 +55,6 @@ export const SpiderPlot = ({ data, width, height }) => {
       .domain(allVariableNames)
       .range([0, 2 * Math.PI]);
 
-    // Definir escalas y com base no valor máximo
     let yScales = {};
     axisConfig.forEach((axis) => {
       yScales[axis.name] = d3
@@ -66,7 +65,6 @@ export const SpiderPlot = ({ data, width, height }) => {
 
     const lineGenerator = d3.lineRadial();
 
-    // Função para calcular coordenadas para cada país
     const generateLinePath = (countryData) => {
       const coordinates = axisConfig.map((axis) => {
         const angle = xScale(axis.name) ?? 0;
@@ -74,73 +72,114 @@ export const SpiderPlot = ({ data, width, height }) => {
         return [angle, radius];
       });
 
-      // Verifica se o país tem pelo menos um dado válido
       const hasValidData = Object.values(countryData).some(
         (value) => value !== null && value !== 0
       );
-      if (!hasValidData) return null; // Não desenhar a linha se não houver dados válidos
+      if (!hasValidData) return null;
 
-      coordinates.push(coordinates[0]); // Fechar o caminho
-      return lineGenerator(coordinates);
+      coordinates.push(coordinates[0]);
+      return {
+        path: lineGenerator(coordinates),
+        points: coordinates.map((coord, i) => ({
+          angle: coord[0],
+          radius: coord[1],
+          sector: axisConfig[i]?.name,
+          value: Object.values(countryData)[i],
+        })),
+      };
     };
 
-    // Gerar caminhos para cada país
     const linePaths = countries
-      .map((country) => ({
-        path: generateLinePath(parsedData[country]),
-        color: country === "China" ? "#e63946" : "#345d7e", // Cores para China e Japão
-        country,
-      }))
-      .filter((line) => line.path !== null); // Filtrar caminhos nulos
+      .map((country) => {
+        const result = generateLinePath(parsedData[country]);
+        return {
+          path: result?.path,
+          points: result?.points || [],
+          color: country === "China" ? "#e63946" : "#345d7e",
+          country,
+        };
+      })
+      .filter((line) => line.path !== null);
 
     setSvgElements({ linePaths, xScale, axisConfig, outerRadius });
   }, [data, width, height]);
 
   return (
-    <svg width={width} height={height}>
-      <g transform={`translate(${width / 2},${height / 2})`}>
-        {svgElements.xScale && (
-          <SpiderGrid
-            outerRadius={svgElements.outerRadius}
-            xScale={svgElements.xScale}
-            axisConfig={svgElements.axisConfig}
-          />
-        )}
-        {svgElements.linePaths.map((lineData, index) => (
-          <path
-            key={index}
-            d={lineData.path}
-            stroke={lineData.color}
-            strokeWidth={3}
-            fill={lineData.color}
-            fillOpacity={0.1}
-          />
-        ))}
-      </g>
-      {/* Legenda */}
-      <g transform={`translate(${MARGIN}, ${height - MARGIN * 2})`}>
-        {svgElements.linePaths.map((lineData, index) => (
-          <g key={index} transform={`translate(0, ${index * 20})`}>
-            <rect
-              x={0}
-              y={-10}
-              width={15}
-              height={15}
-              fill={lineData.color}
-              stroke={lineData.color}
+    <div style={{ position: "relative" }}>
+      <svg width={width} height={height}>
+        <g transform={`translate(${width / 2},${height / 2})`}>
+          {svgElements.xScale && (
+            <SpiderGrid
+              outerRadius={svgElements.outerRadius}
+              xScale={svgElements.xScale}
+              axisConfig={svgElements.axisConfig}
             />
-            <text
-              x={20}
-              y={0}
-              alignmentBaseline="middle"
-              fontSize={12}
-              fill="#000"
-            >
-              {lineData.country}
-            </text>
-          </g>
-        ))}
-      </g>
-    </svg>
+          )}
+          {svgElements.linePaths.map((lineData, index) => (
+            <g key={index}>
+              <path
+                d={lineData.path}
+                stroke={lineData.color}
+                strokeWidth={3}
+                fill={lineData.color}
+                fillOpacity={0.1}
+              />
+              {lineData.points.map((point, idx) => {
+                const x = point.radius * Math.cos(point.angle - Math.PI / 2);
+                const y = point.radius * Math.sin(point.angle - Math.PI / 2);
+
+                return (
+                  <circle
+                    key={idx}
+                    cx={x}
+                    cy={y}
+                    r={4}
+                    fill={lineData.color}
+                    stroke="white"
+                    strokeWidth={1.5}
+                    onMouseOver={(event) => {
+                      const tooltip = d3.select(tooltipRef.current);
+                      tooltip
+                        .style("visibility", "visible")
+                        .style("top", `${event.pageY - 10}px`)
+                        .style("left", `${event.pageX + 10}px`)
+                        .html(
+                          `<strong>${lineData.country}</strong><br>Sector: ${
+                            point.sector
+                          }<br>Value: ${point.value.toFixed(2)}%`
+                        );
+                    }}
+                    onMouseMove={(event) => {
+                      const tooltip = d3.select(tooltipRef.current);
+                      tooltip
+                        .style("top", `${event.pageY - 10}px`)
+                        .style("left", `${event.pageX + 10}px`);
+                    }}
+                    onMouseOut={() => {
+                      const tooltip = d3.select(tooltipRef.current);
+                      tooltip.style("visibility", "hidden");
+                    }}
+                  />
+                );
+              })}
+            </g>
+          ))}
+        </g>
+      </svg>
+      {/* Tooltip */}
+      <div
+        ref={tooltipRef}
+        style={{
+          position: "absolute",
+          visibility: "hidden",
+          backgroundColor: "white",
+          padding: "5px",
+          borderRadius: "5px",
+          border: "1px solid black",
+          fontSize: "12px",
+          pointerEvents: "none",
+        }}
+      ></div>
+    </div>
   );
 };
