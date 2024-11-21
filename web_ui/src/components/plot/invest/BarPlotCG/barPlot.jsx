@@ -12,7 +12,6 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
 
     // Processar dados para calcular as médias do ranking global para a China e o Japão
     const groupedData = sectors.map((sector) => {
-      // Filtrar dados para China e Japão
       const chinaData = data.filter(
         (d) => d["Tech Sector"] === sector && d.Country === "China"
       );
@@ -20,11 +19,8 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
         (d) => d["Tech Sector"] === sector && d.Country === "Japan"
       );
 
-      // Calcular a média do ranking global para a China
       const averageChinaRanking =
         d3.mean(chinaData, (d) => +d["Global Innovation Ranking"]) || 0;
-
-      // Calcular a média do ranking global para o Japão
       const averageJapanRanking =
         d3.mean(japanData, (d) => +d["Global Innovation Ranking"]) || 0;
 
@@ -49,10 +45,9 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
     const yScale = d3
       .scaleLinear()
       .domain([
-        d3.min(groupedData, (d) =>
-          Math.min(d.chinaRanking - 1, d.japanRanking - 1)
-        ),
-        d3.max(groupedData, (d) => Math.max(d.chinaRanking, d.japanRanking)),
+        0,
+        d3.max(groupedData, (d) => Math.max(d.chinaRanking, d.japanRanking)) +
+          1,
       ])
       .range([boundsHeight, 0]);
 
@@ -64,46 +59,98 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
+    // Configurar tooltip
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("visibility", "hidden")
+      .style("position", "absolute")
+      .style("background", "white")
+      .style("padding", "5px")
+      .style("border-radius", "4px")
+      .style("border", "1px solid #ccc")
+      .style("font-size", "12px")
+      .style("pointer-events", "none");
+
+    // Adicionar grelha nos eixos
+    g.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(yScale).tickSize(-boundsWidth).tickFormat(""))
+      .selectAll("line")
+      .style("stroke", "#e0e0e0")
+      .style("stroke-dasharray", "2,2");
+
+    g.append("g")
+      .attr("class", "grid")
+      .attr("transform", `translate(0,${boundsHeight})`)
+      .call(d3.axisBottom(xScale).tickSize(-boundsHeight).tickFormat(""))
+      .selectAll("line")
+      .style("stroke", "#e0e0e0")
+      .style("stroke-dasharray", "2,2");
+
     // Eixo X com labels ajustadas
     g.append("g")
       .attr("transform", `translate(0,${boundsHeight})`)
       .call(d3.axisBottom(xScale))
       .selectAll("text")
       .style("text-anchor", "middle")
-      .attr("dy", (d, i) => (i % 2 === 0 ? "0.5em" : "1.5em")) // Alterna a posição vertical
-      .attr("transform", (d, i) => (i % 2 === 0 ? "" : "rotate(0)")); // Pode ajustar a rotação, se necessário
+      .attr("y", (d, i) => (i % 2 === 0 ? 5 : 13));
 
     // Eixo Y - Ranking Global
     g.append("g").call(d3.axisLeft(yScale));
 
     // Adicionar barras para a China
-    g.append("g")
-      .selectAll("g")
+    g.selectAll(".bar-china")
       .data(groupedData)
-      .join("g")
-      .attr("transform", (d) => `translate(${xScale(d.sector)},0)`)
-      .append("rect")
-      .attr("x", 0) // Barra da China começa no eixo X
+      .join("rect")
+      .attr("class", "bar-china")
+      .attr("x", (d) => xScale(d.sector))
       .attr("y", (d) => yScale(d.chinaRanking))
-      .attr("width", xScale.bandwidth() / 2) // Largura para a barra da China
+      .attr("width", xScale.bandwidth() / 2)
       .attr("height", (d) => boundsHeight - yScale(d.chinaRanking))
-      .attr("fill", "steelblue");
+      .attr("fill", "#e63946")
+      .on("mouseover", (event, d) => {
+        tooltip
+          .html(
+            `<strong>China</strong><br>Setor: ${
+              d.sector
+            }<br>Ranking: ${d.chinaRanking.toFixed(2)}`
+          )
+          .style("visibility", "visible");
+      })
+      .on("mousemove", (event) => {
+        tooltip
+          .style("top", `${event.pageY - 10}px`)
+          .style("left", `${event.pageX + 10}px`);
+      })
+      .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
     // Adicionar barras para o Japão
-    g.append("g")
-      .selectAll("g")
+    g.selectAll(".bar-japan")
       .data(groupedData)
-      .join("g")
-      .attr(
-        "transform",
-        (d) => `translate(${xScale(d.sector) + xScale.bandwidth() / 2},0)`
-      )
-      .append("rect")
-      .attr("x", 0) // Barra do Japão começa após a da China
+      .join("rect")
+      .attr("class", "bar-japan")
+      .attr("x", (d) => xScale(d.sector) + xScale.bandwidth() / 2)
       .attr("y", (d) => yScale(d.japanRanking))
-      .attr("width", xScale.bandwidth() / 2) // Largura para a barra do Japão
+      .attr("width", xScale.bandwidth() / 2)
       .attr("height", (d) => boundsHeight - yScale(d.japanRanking))
-      .attr("fill", "orange");
+      .attr("fill", "#345d7e")
+      .on("mouseover", (event, d) => {
+        tooltip
+          .html(
+            `<strong>Japão</strong><br>Setor: ${
+              d.sector
+            }<br>Ranking: ${d.japanRanking.toFixed(2)}`
+          )
+          .style("visibility", "visible");
+      })
+      .on("mousemove", (event) => {
+        tooltip
+          .style("top", `${event.pageY - 10}px`)
+          .style("left", `${event.pageX + 10}px`);
+      })
+      .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
     // Adicionar labels aos eixos
     g.append("text")
@@ -112,12 +159,12 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
         `translate(${boundsWidth / 2},${boundsHeight + margin.bottom - 5})`
       )
       .style("text-anchor", "middle")
-      .text("Setores");
+      .text("Sectores");
 
     g.append("text")
       .attr("transform", `translate(-35,${boundsHeight / 2}) rotate(-90)`)
       .style("text-anchor", "middle")
-      .text("Ranking Global");
+      .text("Ranking de Inovação Global");
 
     // Legenda
     const legend = svg
@@ -125,33 +172,34 @@ export const BarPlotCG = ({ data, width, height, margin }) => {
       .attr("transform", `translate(${boundsWidth - 100},${margin.top})`);
 
     legend
-      .append("circle")
-      .attr("cx", 50)
-      .attr("r", 6)
-      .style("fill", "steelblue");
+      .append("rect")
+      .attr("x", 94)
+      .attr("y", 1)
+      .attr("width", 15)
+      .attr("height", 15)
+      .attr("fill", "#e63946");
 
     legend
       .append("text")
-      .attr("x", 60)
-      .attr("y", 0)
+      .attr("x", 114)
+      .attr("y", 13)
       .text("China")
-      .style("font-size", "12px")
-      .attr("alignment-baseline", "middle");
+      .style("font-size", "12px");
 
     legend
-      .append("circle")
-      .attr("cx", 50)
-      .attr("cy", 20)
-      .attr("r", 6)
-      .style("fill", "orange");
+      .append("rect")
+      .attr("x", 94)
+      .attr("y", 20)
+      .attr("width", 15)
+      .attr("height", 15)
+      .attr("fill", "#345d7e");
 
     legend
       .append("text")
-      .attr("x", 60)
-      .attr("y", 20)
+      .attr("x", 112)
+      .attr("y", 32)
       .text("Japão")
-      .style("font-size", "12px")
-      .attr("alignment-baseline", "middle");
+      .style("font-size", "12px");
   }, [data, width, height, margin]);
 
   return <svg ref={svgRef} width={width} height={height}></svg>;
