@@ -146,10 +146,11 @@ export const LinePlotSA = ({ data, width, height, margin }) => {
         })
         .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
-      g.append("circle")
-        .attr("cx", boundsWidth - 48)
-        .attr("cy", boundsHeight - 270)
-        .attr("r", 6)
+      g.append("rect")
+        .attr("x", boundsWidth - 60)
+        .attr("y", boundsHeight - 277)
+        .attr("width", 15)
+        .attr("height", 15)
         .style("fill", "#e63946");
 
       g.append("text")
@@ -195,10 +196,11 @@ export const LinePlotSA = ({ data, width, height, margin }) => {
         })
         .on("mouseout", () => tooltip.style("visibility", "hidden"));
 
-      g.append("circle")
-        .attr("cx", boundsWidth - 50)
-        .attr("cy", boundsHeight - 295)
-        .attr("r", 6)
+      g.append("rect")
+        .attr("x", boundsWidth - 60)
+        .attr("y", boundsHeight - 302)
+        .attr("width", 15)
+        .attr("height", 15)
         .style("fill", "#345d7e");
 
       g.append("text")

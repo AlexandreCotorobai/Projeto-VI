@@ -202,10 +202,11 @@ export const LinePlotCRA = ({ data, width, height, margin }) => {
       .text("Financiamento de capital de risco (em Bilhões USD)");
 
     if (Object.values(parsedData).some((d) => d.sumStartupsChina !== null)) {
-      g.append("circle")
-        .attr("cx", boundsWidth - 48)
-        .attr("cy", boundsHeight - 270)
-        .attr("r", 6)
+      g.append("rect")
+        .attr("x", boundsWidth - 60)
+        .attr("y", boundsHeight - 277)
+        .attr("width", 15)
+        .attr("height", 15)
         .style("fill", "#e63946");
 
       g.append("text")
@@ -216,10 +217,11 @@ export const LinePlotCRA = ({ data, width, height, margin }) => {
     }
 
     if (Object.values(parsedData).some((d) => d.sumStartupsJapan !== null)) {
-      g.append("circle")
-        .attr("cx", boundsWidth - 50)
-        .attr("cy", boundsHeight - 295)
-        .attr("r", 6)
+      g.append("rect")
+        .attr("x", boundsWidth - 60)
+        .attr("y", boundsHeight - 302)
+        .attr("width", 15)
+        .attr("height", 15)
         .style("fill", "#345d7e");
 
       g.append("text")
