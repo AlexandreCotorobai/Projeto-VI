@@ -10,51 +10,38 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
     // Filtra os dados para o país selecionado
     data = data.filter((d) => d.Country === country);
 
-    // Agrupar dados por ano e calcular médias, substituindo valores null por 0
+    // Agrupar dados por ano e calcular médias
     const parsedData = {}; // Objeto onde os dados serão armazenados
-
-    // Obtém os anos únicos presentes no conjunto de dados
     const years = Array.from(new Set(data.map((d) => d.Year)));
 
     years.forEach((year) => {
-      // Filtra os dados para o ano específico
       const yearData = data.filter((d) => d.Year === year);
-
-      // Calcula a média de 5G Network Coverage (%) e Internet Penetration (%)
       const avg5G = d3.mean(yearData, (d) => +d["5G Network Coverage (%)"]);
       const avgInternet = d3.mean(
         yearData,
         (d) => +d["Internet Penetration (%)"]
       );
 
-      // Armazena os resultados no objeto parsedData
       parsedData[year] = {
-        year: new Date(year), // Converte o ano para um objeto Date
-        avg5G: avg5G || 0, // Substitui valores null ou undefined por 0
-        avgInternet: avgInternet || 0, // Substitui valores null ou undefined por 0
+        year: new Date(year),
+        avg5G: avg5G || 0,
+        avgInternet: avgInternet || 0,
       };
     });
 
-    // Set up the margins and dimensions for the chart
     const boundsWidth = width - margin.left - margin.right;
     const boundsHeight = height - margin.top - margin.bottom;
 
-    // Select the SVG element and clear it
     const svg = d3.select(svgRef.current);
     svg.selectAll("*").remove();
 
-    // Set up the scales for the axes
     const xScale = d3
       .scaleTime()
-      .domain(d3.extent(Object.values(parsedData), (d) => d.year)) // X scale based on years
+      .domain(d3.extent(Object.values(parsedData), (d) => d.year))
       .range([0, boundsWidth]);
 
-    const yScale = d3
-      .scaleLinear()
-      .domain([0, 100]) // Y scale goes from 0 to 100 for percentages
-      .range([boundsHeight, 0]);
+    const yScale = d3.scaleLinear().domain([0, 100]).range([boundsHeight, 0]);
 
-    // Set up the line generators for 5G Network Coverage and Internet Penetration
     const lineGenerator5G = d3
       .line()
       .x((d) => xScale(d.year))
@@ -65,80 +52,155 @@ export const LinePlot = ({ data, width, height, margin, country }) => {
       .x((d) => xScale(d.year))
       .y((d) => yScale(d.avgInternet));
 
-    // Append the chart group
     const g = svg
       .append("g")
       .attr("transform", `translate(${margin.left},${margin.top})`);
 
-    // Draw the axes
+    const tooltip = d3
+      .select("body")
+      .append("div")
+      .attr("class", "tooltip")
+      .style("position", "absolute")
+      .style("background", "white")
+      .style("padding", "5px")
+      .style("border", "1px solid black")
+      .style("border-radius", "5px")
+      .style("visibility", "hidden");
+
+    // Eixos X e Y
+    const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y"));
+    const yAxis = d3.axisLeft(yScale);
+
+    // Grelha para eixo X
     g.append("g")
+      .attr("class", "grid")
       .attr("transform", `translate(0,${boundsHeight})`)
-      .call(
-        d3
-          .axisBottom(xScale)
-          .ticks(
-            years.length > 10 // Verifica o número de anos no conjunto de dados
-              ? d3.timeYear.every(2)
-              : d3.timeYear.every(1) // Exibe todos os anos quando há poucos dados
-          )
-          .tickFormat(d3.timeFormat("%Y")) // Formata os ticks como anos (YYYY)
-      );
+      .call(d3.axisBottom(xScale).tickSize(-boundsHeight).tickFormat(""))
+      .selectAll("line")
+      .style("stroke", "#e0e0e0")
+      .style("stroke-dasharray", "3,3");
 
-    g.append("g").call(d3.axisLeft(yScale));
+    // Grelha para eixo Y
+    g.append("g")
+      .attr("class", "grid")
+      .call(d3.axisLeft(yScale).tickSize(-boundsWidth).tickFormat(""))
+      .selectAll("line")
+      .style("stroke", "#e0e0e0")
+      .style("stroke-dasharray", "3,3");
 
-    // Add the line for 5G Network Coverage
+    // Adiciona os eixos principais
+    g.append("g").attr("transform", `translate(0,${boundsHeight})`).call(xAxis);
+    g.append("g").call(yAxis);
+
+    // Linha para Cobertura 5G
     g.append("path")
-      .datum(Object.values(parsedData)) // Pass the array of parsed data
+      .datum(Object.values(parsedData))
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
       .attr("d", lineGenerator5G);
 
-    // Add the line for Internet Penetration
+    // Linha para Penetração de Internet
     g.append("path")
-      .datum(Object.values(parsedData)) // Pass the array of parsed data
+      .datum(Object.values(parsedData))
       .attr("fill", "none")
       .attr("stroke", "green")
       .attr("stroke-width", 1.5)
       .attr("d", lineGeneratorInternet);
 
+    // Pontos para Cobertura 5G
+    g.selectAll(".dot5G")
+      .data(Object.values(parsedData))
+      .enter()
+      .append("circle")
+      .attr("cx", (d) => xScale(d.year))
+      .attr("cy", (d) => yScale(d.avg5G))
+      .attr("r", 4)
+      .style("fill", "steelblue")
+      .on("mouseover", function (event, d) {
+        tooltip
+          .html(
+            `<strong>5G Coverage:</strong> ${d.avg5G.toFixed(
+              2
+            )}%<br><strong>Year:</strong> ${d3.timeFormat("%Y")(d.year)}`
+          )
+          .style("visibility", "visible");
+      })
+      .on("mousemove", function (event) {
+        tooltip
+          .style("top", `${event.pageY - 10}px`)
+          .style("left", `${event.pageX + 10}px`);
+      })
+      .on("mouseout", function () {
+        tooltip.style("visibility", "hidden");
+      });
+
+    // Pontos para Penetração de Internet
+    g.selectAll(".dotInternet")
+      .data(Object.values(parsedData))
+      .enter()
+      .append("circle")
+      .attr("cx", (d) => xScale(d.year))
+      .attr("cy", (d) => yScale(d.avgInternet))
+      .attr("r", 4)
+      .style("fill", "green")
+      .on("mouseover", function (event, d) {
+        tooltip
+          .html(
+            `<strong>Internet Penetration:</strong> ${d.avgInternet.toFixed(
+              2
+            )}%<br><strong>Year:</strong> ${d3.timeFormat("%Y")(d.year)}`
+          )
+          .style("visibility", "visible");
+      })
+      .on("mousemove", function (event) {
+        tooltip
+          .style("top", `${event.pageY - 10}px`)
+          .style("left", `${event.pageX + 10}px`);
+      })
+      .on("mouseout", function () {
+        tooltip.style("visibility", "hidden");
+      });
+
+    // Labels
+    g.append("text")
+      .attr(
+        "transform",
+        `translate(${boundsWidth / 2},${boundsHeight + margin.bottom})`
+      )
+      .style("text-anchor", "middle")
+      .text("Year");
+
+    g.append("text")
+      .attr("transform", `translate(-40,${boundsHeight / 2}) rotate(-90)`)
+      .style("text-anchor", "middle")
+      .text("Percentage (%)");
+
     // Add the legend for 5G Network Coverage
     g.append("circle")
-      .attr("cx", boundsWidth - 110)
-      .attr("cy", 20)
+      .attr("cx", boundsWidth - 126)
+      .attr("cy", boundsHeight - 270)
       .attr("r", 6)
       .style("fill", "steelblue");
 
     g.append("text")
-      .attr("x", boundsWidth - 100)
-      .attr("y", 20)
+      .attr("x", boundsWidth - 118)
+      .attr("y", boundsHeight - 270)
       .attr("dy", ".35em")
       .text("5G Coverage (%)");
 
     // Add the legend for Internet Penetration
     g.append("circle")
-      .attr("cx", boundsWidth - 160)
+      .attr("cx", boundsWidth - 170)
+      .attr("cy", boundsHeight - 295)
       .attr("r", 6)
       .style("fill", "green");
 
     g.append("text")
-      .attr("x", boundsWidth - 150)
+      .attr("x", boundsWidth - 162)
+      .attr("y", boundsHeight - 295)
       .attr("dy", ".35em")
       .text("Internet Penetration (%)");
-
-    // Add labels
-    g.append("text")
-      .attr(
-        "transform",
-        `translate(${width / 3},${height - margin.bottom + 5})`
-      )
-      .text("Year");
-
-    // Add labels
-    g.append("text")
-      .attr("transform", `translate(-30,${height / 2}) rotate(-90)`)
-      .style("text-anchor", "middle")
-      .text("Value (%)");
   }, [data, width, height, margin, country]);
 
   return <svg ref={svgRef} width={width} height={height}></svg>;
