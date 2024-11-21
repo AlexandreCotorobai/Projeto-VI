@@ -34,7 +34,19 @@ export const SpiderGrid = ({ outerRadius, xScale, axisConfig }) => {
           textAnchor={labelPosition.x > 0 ? "start" : "end"}
           dominantBaseline="middle"
         >
-          {axis.name}
+          {axis.name == "AI"
+            ? "IA"
+            : axis.name == "Biotechnology"
+            ? "Biotecnologia"
+            : axis.name == "Cloud Computing"
+            ? "Computação em Nuvem"
+            : axis.name == "Robotics"
+            ? "Robótica"
+            : axis.name == "Semiconductor"
+            ? "Semicondutores"
+            : axis.name == "Telecommunications"
+            ? "Telecomunicações"
+            : axis.name}
         </text>
       </g>
     );
