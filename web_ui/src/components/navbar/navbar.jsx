@@ -25,7 +25,7 @@ export const Navbar = (props) => {
           </Link>
         </div>
         <div className="text-center normal-case text-lg md:text-xl">
-          <p className="font-bold text-white">🇨🇳 China - 🇯🇵 Japan</p>
+          <p className="font-bold text-white">🇨🇳 China - 🇯🇵 Japão</p>
           <p className="text-sm md:text-base text-[#ffffff99]">
             Guerra Tecnológica
           </p>
