@@ -1,6 +1,22 @@
 [
   {
-    "title": "Fatalities over Time",
-    "description": "This plot displays the number of fatalities in the Israel-Palestine conflict over a specified time period. The vertical axis represents the number of fatalities, while the horizontal axis represents the date of the events. Spikes in the graph likely indicate specific incidents or escalations in the conflict that resulted in a higher number of deaths. Users can analyze patterns over time, observe periods of increased conflict intensity, and identify any trends or anomalies in the data."
+    "title": "Número de Startups por Ano",
+    "description": "Este gráfico de linhas exibe o número de startups na China (vermelho) e no Japão (azul) ao longo dos anos de 2000 a 2022. O eixo vertical representa o número de startups, enquanto o eixo horizontal mostra os anos. As linhas permitem comparar as flutuações no surgimento de startups entre os dois países ao longo do tempo, destacando tendências e diferenças no dinamismo do ecossistema de startups."
+  },
+  {
+    "title": "Financiamento em Capital de Risco por Ano",
+    "description": "Este gráfico de linhas apresenta o financiamento em capital de risco, medido em bilhões de dólares, na China (vermelho) e no Japão (azul) ao longo do período de 2000 a 2022. O eixo vertical indica o volume de investimento, enquanto o eixo horizontal abrange os anos. As linhas permitem observar a evolução e os picos de financiamento em cada país, destacando os períodos de maior investimento em inovação."
+  },
+  {
+    "title": "Classificação Global por Setor",
+    "description": "Este gráfico de barras compara a classificação global em inovação para diferentes setores, como Software, Semicondutores, Robótica, Cloud Computing, Inteligência Artificial, Biotecnologia e Telecomunicações, na China (vermelho) e no Japão (azul). O eixo horizontal apresenta os setores, enquanto o eixo vertical exibe a posição no ranking global. As barras permitem identificar os setores em que cada país se destaca ou apresenta maior competitividade."
+  },
+  {
+    "title": "Investimento em Capital de Risco por Setor",
+    "description": "Este gráfico de barras mostra o volume de investimento em capital de risco, em bilhões de dólares, por setor na China (vermelho) e no Japão (azul). Os setores analisados incluem Software, Semicondutores, Robótica, Computação em Nuvem, Inteligência Artificial, Biotecnologia e Telecomunicações. O eixo horizontal indica os setores, enquanto o eixo vertical apresenta os valores de investimento, permitindo comparar a intensidade dos aportes financeiros entre os dois países em cada área."
+  },
+  {
+    "title": "Número de Trabalhadores por Setor",
+    "description": "Este gráfico de barras apresenta o número médio de trabalhadores em setores tecnológicos na China (vermelho) e no Japão (azul). O eixo horizontal mostra os diferentes setores, como Software, Semicondutores, Robótica, Computação em Nuvem, Inteligência Artificial, Biotecnologia e Telecomunicações. O eixo vertical representa o número médio de trabalhadores. As barras permitem comparar o volume de mão de obra empregada em cada setor entre os dois países, destacando os setores com maior concentração de trabalhadores tecnológicos."
   }
 ]

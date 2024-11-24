@@ -1,6 +1,26 @@
 [
   {
-    "title": "Fatalities over Time",
-    "description": "This plot displays the number of fatalities in the Israel-Palestine conflict over a specified time period. The vertical axis represents the number of fatalities, while the horizontal axis represents the date of the events. Spikes in the graph likely indicate specific incidents or escalations in the conflict that resulted in a higher number of deaths. Users can analyze patterns over time, observe periods of increased conflict intensity, and identify any trends or anomalies in the data."
+    "title": "Ranking Global Médio de Inovação por Setor por Ano - China",
+    "description": "Este gráfico exibe a evolução do ranking global médio de inovação por setor na China ao longo dos anos. O eixo vertical representa a posição média no ranking de inovação global, enquanto o eixo horizontal indica os anos entre 2000 e 2022. A linha tracejada ilustra flutuações ao longo do tempo, permitindo observar tendências no desempenho da China em inovação em diferentes setores selecionados. Selecionando os Setores é possivel ter uma visualização do desempenho de cada setor em relação à média e a outros setores selecionados."
+  },
+  {
+    "title": "Ranking Global Médio de Inovação por Setor por Ano - Japão",
+    "description": "Este gráfico mostra o ranking global médio de inovação por setor no Japão ao longo do período de 2000 a 2022. O eixo vertical representa a classificação média global em inovação, enquanto o eixo horizontal cobre os anos analisados. A linha tracejada ajuda a identificar variações e tendências no desempenho do Japão em termos de inovação em setores específicos. Selecionando os Setores é possivel ter uma visualização do desempenho de cada setor em relação à média e a outros setores selecionados."
+  },
+  {
+    "title": "Colaborações Universitárias e Patentes - China",
+    "description": "Este gráfico apresenta a relação entre o número de colaborações universitárias e o número de patentes registradas na China para diferentes setores, como Inteligência Artificial, Biotecnologia e Cloud Computing. O eixo horizontal mostra o número de colaborações universitárias, enquanto o eixo vertical representa a quantidade de patentes. As barras coloridas indicam os diferentes setores analisados."
+  },
+  {
+    "title": "Colaborações Universitárias e Patentes - Japão",
+    "description": "Este gráfico ilustra a relação entre colaborações universitárias e patentes no Japão, segmentado por setores como Robótica, Semicondutores e Telecomunicações. O eixo horizontal exibe o número de colaborações universitárias, enquanto o eixo vertical mostra a quantidade de patentes registradas. As cores das barras correspondem a diferentes setores, permitindo uma análise visual clara das interações entre colaborações e produção de patentes."
+  },
+  {
+    "title": "Colaborações Universitárias e Patentes",
+    "description": "Este gráfico de dispersão ilustra a relação entre o número de colaborações universitárias e o número de patentes registradas na China (vermelho) e no Japão (azul). O eixo horizontal representa as colaborações universitárias, enquanto o eixo vertical indica o número de patentes registradas. Cada ponto no gráfico corresponde a um dado específico, permitindo comparar a intensidade das colaborações acadêmicas e sua relação com a produção de patentes em ambos os países."
+  },
+  {
+    "title": "Investimento em R&D e Número de Patentes",
+    "description": "Este gráfico de dispersão apresenta a relação entre o investimento em Pesquisa e Desenvolvimento (R&D) e o número de patentes registradas na China (vermelho) e no Japão (azul). O eixo horizontal representa o investimento em R&D em bilhões de dólares (USD), enquanto o eixo vertical indica o número de patentes registradas. Cada ponto no gráfico reflete uma observação específica, possibilitando identificar tendências e padrões entre o investimento em inovação e a produção de patentes nos dois países."
   }
 ]
