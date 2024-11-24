@@ -10,7 +10,7 @@ export const HistogramPlot = ({ data, country, width, height, margin }) => {
     // Filter the data to include only the selected country
     const countryData = data.filter((d) => d.Country === country);
 
-    if (countryData.length === 0) return; // Return if no data found for the given country
+    if (countryData.length === 0) return;
 
     // Get unique sectors
     const sectors = Array.from(
@@ -50,15 +50,15 @@ export const HistogramPlot = ({ data, country, width, height, margin }) => {
     // Adjusted scale for X-axis (University Research Collaborations)
     const xScale = d3
       .scaleLinear()
-      .domain(d3.extent(parsedData, (d) => d.avgResearchCollaborations)) // Adjusted domain
-      .nice() // Ensure that the axis is neatly rounded to fit the data range
+      .domain(d3.extent(parsedData, (d) => d.avgResearchCollaborations))
+      .nice()
       .range([0, boundsWidth]);
 
     // Adjusted scale for Y-axis (Number of Patents Filed (Annual))
     const yScale = d3
       .scaleLinear()
       .domain([0, d3.max(parsedData, (d) => d.avgPatentsFiled)])
-      .nice() // Ensure that the axis is neatly rounded
+      .nice()
       .range([boundsHeight, 0]);
 
     const g = svg
@@ -85,33 +85,46 @@ export const HistogramPlot = ({ data, country, width, height, margin }) => {
         .attr("y", yScale(sectorData.avgPatentsFiled))
         .attr("width", barWidth)
         .attr("height", barHeight)
-        .attr("fill", colorScale(sectorData.sector)) // Fill with sector-specific color
-        .attr("class", `bar-${country}-${sectorData.sector}`);
+        .attr("fill", colorScale(sectorData.sector));
 
       // Add the sector name inside the bar
       g.append("text")
-        .attr("x", xScale(sectorData.avgResearchCollaborations) + barWidth / 2) // Center text horizontally
-        .attr("y", yScale(sectorData.avgPatentsFiled) + barHeight / 2) // Center text vertically
-        .attr("dy", ".35em") // Adjust vertical alignment
+        .attr("x", xScale(sectorData.avgResearchCollaborations) + barWidth / 2)
+        .attr("y", yScale(sectorData.avgPatentsFiled) + barHeight / 2)
+        .attr("dy", ".35em")
         .attr("text-anchor", "middle")
-        .style("fill", "#fff") // White text color for visibility
-        .style("font-size", "10px")
-        .attr("transform", "rotate(90)") // Rotate text
-        .text(sectorData.sector); // Add sector name
+        .style("fill", "#fff")
+        .style("font-size", "10px");
     });
 
     // Create the legend for sectors
     const legend = g
       .append("g")
-      .attr("transform", `translate(${boundsWidth - 150}, 20)`);
+      .attr(
+        "transform",
+        `translate(${boundsWidth - 130},${boundsHeight + margin.bottom - 210})`
+      );
 
+    // Add a white rectangle as the background for the legend
+    const legendBackgroundWidth = 135;
+    const legendBackgroundHeight = sectors.length * 20 + 10;
+
+    legend
+      .append("rect")
+      .attr("width", legendBackgroundWidth)
+      .attr("height", legendBackgroundHeight)
+      .attr("fill", "white")
+      .attr("stroke", "#ccc")
+      .attr("rx", 5); // Rounded corners
+
+    // Add legend items
     legend
       .selectAll(".legend-item")
       .data(sectors)
       .enter()
       .append("g")
       .attr("class", "legend-item")
-      .attr("transform", (d, i) => `translate(0, ${i * 20})`)
+      .attr("transform", (d, i) => `translate(10, ${i * 20 + 5})`)
       .each(function (sector) {
         const item = d3.select(this);
         const sectorColor = colorScale(sector);
